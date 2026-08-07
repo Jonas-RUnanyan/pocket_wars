@@ -1,61 +1,23 @@
-/*
- *  Sprites.h
- *
- *  Adapted from Liran Nuna's sprite handling code. Special thanks to Liran
- *  Nuna.
- *
- *  Created by Jaeden Amero on 3/12/06.
- *  Copyright 2006. All rights reserved.
- *
- */
-
-#include <nds.h>
-
+// sprites.h
 #ifndef SPRITES_H
 #define SPRITES_H
+#include <nds.h>
 
-static const int SPRITE_DMA_CHANNEL = 3;
+enum SpriteScreen { SPR_MAIN, SPR_SUB };
 
-typedef struct {
-    int oamId;
-    int width;
-    int height;
-    int angle;
-    SpriteEntry * entry;
-} SpriteInfo;
+// Call once per engine you use this on. NOTE: main-engine OAM is already
+// initialized by initTextSprites(TEXT_ENGINE_MAIN) in text_sprites.cpp —
+// do NOT call initGameSprites(SPR_MAIN) too, oamInit() would reset it and
+// wipe out the menu/button text sprites. Sub engine is fully free (its
+// old sprite-based text was replaced by the BG tile renderer), so this is
+// currently only meant to be called for SPR_SUB.
+void initGameSprites(SpriteScreen screen);
 
-/*
- *  updateOAM
- *
- *  Update the OAM.
- *
- */
-void updateOAM(OAMTable * oam);
+u16* allocSpriteGfx(SpriteScreen screen, SpriteSize size, SpriteColorFormat format);
 
-/*
- *  initOAM
- *
- *  Initialize the OAM.
- *
- */
-void initOAM(OAMTable * oam);
-
-/*
- *  rotateSprite
- *
- *  Rotate a sprite counter-clockwise by the specified angle (in degrees).
- *
- */
-void rotateSprite(SpriteRotation * spriteRotation, int angle);
-
-/*
- *  setSpriteVisibility
- *
- *  Hide or show a sprite of a certain type: affine double bound, affine
- *  non-double bound, or ordinary.
- *
- */
-void setSpriteVisibility(SpriteEntry * spriteEntry, bool hidden,
-                         bool affine = false, bool doubleBound = false);
+void setSprite(SpriteScreen screen, int oamId, int x, int y,
+               SpriteSize size, SpriteColorFormat format, const void* gfx);
+void hideSprite(SpriteScreen screen, int oamId);
+void commitSprites(SpriteScreen screen);
 
 #endif

@@ -12,6 +12,8 @@
 #include "turn_system.h"
 #include "menu.h"
 #include "text_sprites.h"
+#include "sprites.h"
+#include "flags.h"
 
 #undef RGB15
 #define BGR15(r,g,b) (0x8000 | ((b) << 10) | ((g) << 5) | (r))
@@ -43,8 +45,6 @@ bool needsRedraw       = true;
 // Last touched province — persists on screen until next touch
 static u16  lastProvinceID   = 0xFFFF;
 static bool hasProvinceInfo  = false;
-
-extern bool DEBUG_glyphAllocOK;
 
 //---------------------------------------------
 // HELPERS
@@ -89,7 +89,7 @@ void initVideo()
     vramSetBankE(VRAM_E_MAIN_SPRITE);        // NEW — Banco E asignado a Sprites del MOTOR MAIN (texto de menús/botones)
 
     // MODO MAIN (Abajo): Modo 5 Bitmap activo + Sprites activos (texto de menús/botones)
-    videoSetMode(MODE_5_2D | DISPLAY_BG3_ACTIVE | DISPLAY_SPR_ACTIVE | DISPLAY_SPR_1D); // added DISPLAY_SPR_ACTIVE
+    videoSetMode(MODE_5_2D | DISPLAY_BG3_ACTIVE | DISPLAY_SPR_ACTIVE | DISPLAY_SPR_1D);
 
     REG_BG3CNT = BG_BMP16_256x256 | BG_BMP_BASE(0) | BG_PRIORITY(3);
     REG_BG3PA = 256;  REG_BG3PB = 0;
@@ -97,26 +97,14 @@ void initVideo()
     REG_BG3X  = 0;    REG_BG3Y  = 0;
 
     // MODO SUB (Arriba): Activar Sprites y mapeo 1D en el Motor Sub
-    videoSetModeSub(MODE_5_2D | DISPLAY_SPR_ACTIVE | DISPLAY_SPR_1D);
+    videoSetModeSub(MODE_5_2D | DISPLAY_BG0_ACTIVE);
 
     // Inicializar los sprites de la fuente en AMBOS motores
     initTextSprites(TEXT_ENGINE_MAIN);  // NEW — texto de botones/menús (pantalla táctil)
     initTextSprites(TEXT_ENGINE_SUB);   // texto de info de provincia (pantalla superior)
-	debugDrawGlyph1();
-	/*
-	clearText(TEXT_ENGINE_SUB);
-	drawText(TEXT_ENGINE_SUB, 10, 10, "TEST SPRITE");
-	commitText(TEXT_ENGINE_SUB);
+	initGameSprites(SPR_SUB);
+	initFlags();
 	
-	u16* vram = (u16*)BG_BMP_RAM(0);
-	u16 color = DEBUG_glyphAllocOK ? BGR15(0,31,0) : BGR15(31,0,0); // green = OK, red = FAILED
-	for (int y = 100; y < 150; y++)
-		for (int x = 0; x < 100; x++)
-			vram[y*256+x] = color;
-	*/	
-	for(int i=0; i<120; i++){
-		swiWaitForVBlank();
-	}
 }
 
 //---------------------------------------------
@@ -361,16 +349,18 @@ void printProvinceInfo(u16 pid)
     // Propietario
     unsigned char oid = province_owners[pid];
     if (oid == 0xFF)
-    {
-        drawText(TEXT_ENGINE_SUB, 8, curY, "OWNER: NONE");
-        curY += 12;
-    }
-    else
-    {
-        const Country* owner = &countries[oid];
-        snprintf(buf, sizeof(buf), "OWNER: %s", owner->name);
-        drawText(TEXT_ENGINE_SUB, 8, curY, buf);
-        curY += 10;
+	{
+		drawText(TEXT_ENGINE_SUB, 8, curY, "OWNER: NONE");
+		hideFlag();
+		curY += 12;
+	}
+	else
+	{
+		const Country* owner = &countries[oid];
+		snprintf(buf, sizeof(buf), "OWNER: %s", owner->name);
+		drawText(TEXT_ENGINE_SUB, 8, curY, buf);
+		showFlag(oid, 180, 8);   // top-right area of the panel — tune to taste
+		curY += 10;
 
         drawText(TEXT_ENGINE_SUB, 8, curY, is_core(pid, oid) ? "(CORE)" : "(OCCUPIED)");
         curY += 12;
@@ -439,12 +429,12 @@ int main(void)
                     {
                         lastProvinceID  = pid;
                         hasProvinceInfo = true;
-
+/*
                         if (provinces[pid].is_water == 0)
                         {
                             province_owners[pid] = CURRENT_TURN.current_country;
                             needsRedraw = true;
-                        }
+                        }*/
                     }
                 }
 

@@ -100,7 +100,6 @@ void enterMenuState()
     menuDirty    = true;
     videoSetMode(MODE_5_2D | DISPLAY_BG0_ACTIVE | DISPLAY_BG3_ACTIVE | DISPLAY_SPR_ACTIVE);
 }
-
 void enterCountrySelectState()
 {
     currentState       = STATE_COUNTRY_SELECT;
@@ -133,7 +132,7 @@ void drawMenu()
 
     clearText(TEXT_ENGINE_MAIN);
 
-    drawText(TEXT_ENGINE_MAIN, 70, 20, "STRATEGY GAME");
+    drawText(TEXT_ENGINE_MAIN, 70, 20, "POCKET WARS");
 
     for (int i = 0; i < 3; i++)
     {

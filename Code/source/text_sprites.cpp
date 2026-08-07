@@ -1,22 +1,54 @@
 #include "text_sprites.h"
 #include "font_data.h"
 #include <string.h>
-#include <nds.h> 
+#include <nds.h>
+
+// ---------------------------------------------------------
+// Hybrid text renderer.
+//
+// MAIN engine (bottom/touch screen): sprites, as before. Menu button
+// labels + country name are short — nowhere near the 128-slot ceiling,
+// so there's no reason to move this off sprites. Bank A is fully
+// consumed by the BG3 map bitmap, and mapBase's hardware range (0-31,
+// max 62KB offset) can only ever reach into Bank A anyway — so a BG
+// tile layer genuinely isn't usable on this engine without tearing up
+// the map bitmap. Sprites sidestep that entirely.
+//
+// SUB engine (top screen / province info): BG tile layer. Bank C is
+// completely unused by anything else, so there's no VRAM conflict
+// here. This is also where the actual budget problem was (info panel
+// text was competing with flag/portrait sprites for the same 128
+// OAM slots) — moving just this engine's text off sprites fixes that
+// while leaving the bottom screen alone.
+// ---------------------------------------------------------
 
 #define MAX_TEXT_SPR 128
 
+#define SUB_MAP_BASE  0   // tilemap: offset 0KB,  2KB used  (mapBase max reach is 62KB — fine)
+#define SUB_TILE_BASE 1   // tile gfx: offset 16KB, ~1.5KB used — well clear of the map above
+
+#define MAP_COLS 32
+#define MAP_ROWS 32
+#define VIS_ROWS 24
+#define BG_CHAR_W 8       // sub-engine tiles are grid-locked to 8px, unlike sprite CHAR_W
+
 struct TextCtx {
+    // --- main engine (sprites) ---
     OamState* oam;
     int       cursor;
     u16*      glyphGfx[FONT_GLYPH_COUNT];
+
+    // --- sub engine (BG tiles) ---
+    int  bgId;
+    u16* mapPtr;
+    u16  tileIdx[FONT_GLYPH_COUNT];
 };
 
 static TextCtx ctxMain;
 static TextCtx ctxSub;
 
 static TextCtx& ctxFor(TextEngine e) { return e == TEXT_ENGINE_MAIN ? ctxMain : ctxSub; }
-bool DEBUG_glyphAllocOK = true;
-struct { u32 marker; u8 tile[32]; } DEBUG_block = { 0xDEADBEEF, {0} };
+
 static int findGlyphIndex(char c)
 {
     if (c >= 'a' && c <= 'z') c -= 32;
@@ -24,46 +56,90 @@ static int findGlyphIndex(char c)
         if (FONT_GLYPHS[i].c == c) return i;
     return 0;
 }
-static u8 tileBuf[32];
+
+static void buildGlyphTile(const Glyph& g, u8* out)
+{
+    for (int row = 0; row < 8; row++)
+    {
+        u8 bits = g.rows[row];
+        for (int col = 0; col < 8; col += 2)
+        {
+            u8 px0 = (bits & (0x80 >> col))     ? 1 : 0;
+            u8 px1 = (bits & (0x80 >> (col+1))) ? 1 : 0;
+            out[row * 4 + col / 2] = px0 | (px1 << 4);
+        }
+    }
+}
+
 void initTextSprites(TextEngine engine)
 {
-    TextCtx& ctx = ctxFor(engine);
-    ctx.oam    = (engine == TEXT_ENGINE_MAIN) ? &oamMain : &oamSub;
-    ctx.cursor = 0;
+    // static: DMA can't read a plain stack array — DTCM is invisible to it.
+    static u8 tileBuf[32];
 
-    oamInit(ctx.oam, SpriteMapping_1D_32, false);
-
-    u16* palette = (engine == TEXT_ENGINE_MAIN) ? SPRITE_PALETTE : SPRITE_PALETTE_SUB;
-    palette[0] = RGB15(0, 0, 0);
-    palette[1] = RGB15(31, 31, 31);
-
-    for (unsigned int g = 0; g < FONT_GLYPH_COUNT; g++)
+    if (engine == TEXT_ENGINE_MAIN)
     {
-        u16* gfx = oamAllocateGfx(ctx.oam, SpriteSize_8x8, SpriteColorFormat_16Color);
-		if (gfx == NULL) DEBUG_glyphAllocOK = false;   // NEW
-		ctx.glyphGfx[g] = gfx;
+        TextCtx& ctx = ctxMain;
+        ctx.oam    = &oamMain;
+        ctx.cursor = 0;
 
-         // build in RAM first — VRAM doesn't support 8-bit writes safely
-        for (int row = 0; row < 8; row++)
+        oamInit(ctx.oam, SpriteMapping_1D_32, false);
+
+        SPRITE_PALETTE[0] = RGB15(0, 0, 0);
+        SPRITE_PALETTE[1] = RGB15(31, 31, 31);
+
+        for (unsigned int g = 0; g < FONT_GLYPH_COUNT; g++)
         {
-            u8 bits = FONT_GLYPHS[g].rows[row];
-            for (int col = 0; col < 8; col += 2)
-            {
-                u8 px0 = (bits & (0x80 >> col))     ? 1 : 0;
-                u8 px1 = (bits & (0x80 >> (col+1))) ? 1 : 0;
-                tileBuf[row * 4 + col / 2] = px0 | (px1 << 4);
-            }
+            u16* gfx = oamAllocateGfx(ctx.oam, SpriteSize_8x8, SpriteColorFormat_16Color);
+            ctx.glyphGfx[g] = gfx;
+
+            buildGlyphTile(FONT_GLYPHS[g], tileBuf);
+            dmaCopyHalfWords(3, tileBuf, gfx, 32);
+            while (dmaBusy(3)) ;
         }
-        dmaCopyHalfWords(3, tileBuf, gfx, 32);
+    }
+    else // TEXT_ENGINE_SUB
+    {
+        TextCtx& ctx = ctxSub;
+
+        ctx.bgId = bgInitSub(0, BgType_Text4bpp, BgSize_T_256x256, SUB_MAP_BASE, SUB_TILE_BASE);
+
+        ctx.mapPtr        = (u16*)bgGetMapPtr(ctx.bgId);
+        u16* gfxPtr        = (u16*)bgGetGfxPtr(ctx.bgId);
+
+        BG_PALETTE_SUB[0] = RGB15(0, 0, 0);
+        BG_PALETTE_SUB[1] = RGB15(31, 31, 31);
+
+        for (unsigned int g = 0; g < FONT_GLYPH_COUNT; g++)
+        {
+            buildGlyphTile(FONT_GLYPHS[g], tileBuf);
+
+            u16* dst = gfxPtr + g * 16; // 16 halfwords = 32 bytes per 4bpp 8x8 tile
+            dmaCopyHalfWords(3, tileBuf, dst, 32);
+            while (dmaBusy(3)) ;
+
+            ctx.tileIdx[g] = g;
+        }
+
+        for (int i = 0; i < MAP_COLS * MAP_ROWS; i++)
+            ctx.mapPtr[i] = 0;
     }
 }
 
 void clearText(TextEngine engine)
 {
     TextCtx& ctx = ctxFor(engine);
-    for (int i = 0; i < ctx.cursor; i++)
-        oamClearSprite(ctx.oam, i);
-    ctx.cursor = 0;
+
+    if (engine == TEXT_ENGINE_MAIN)
+    {
+        for (int i = 0; i < ctx.cursor; i++)
+            oamClearSprite(ctx.oam, i);
+        ctx.cursor = 0;
+    }
+    else
+    {
+        for (int i = 0; i < MAP_COLS * MAP_ROWS; i++)
+            ctx.mapPtr[i] = 0;
+    }
 }
 
 void drawText(TextEngine engine, int x, int y, const char* str)
@@ -71,29 +147,46 @@ void drawText(TextEngine engine, int x, int y, const char* str)
     TextCtx& ctx = ctxFor(engine);
     int len = strlen(str);
 
-    for (int i = 0; i < len && ctx.cursor < MAX_TEXT_SPR; i++)
+    if (engine == TEXT_ENGINE_MAIN)
     {
-        int glyphIdx = findGlyphIndex(str[i]);
+        for (int i = 0; i < len && ctx.cursor < MAX_TEXT_SPR; i++)
+        {
+            int glyphIdx = findGlyphIndex(str[i]);
+            oamSet(ctx.oam, ctx.cursor, x, y, 0, 0, SpriteSize_8x8, SpriteColorFormat_16Color,
+                   ctx.glyphGfx[glyphIdx], -1, false, false, false, false, false);
+            x += CHAR_W;
+            ctx.cursor++;
+        }
+    }
+    else
+    {
+        int col = x / BG_CHAR_W;
+        int row = y / BG_CHAR_W;
+        if (row < 0 || row >= VIS_ROWS) return;
 
-        oamSet(ctx.oam, ctx.cursor, x, y, 0, 0, SpriteSize_8x8, SpriteColorFormat_16Color,
-               ctx.glyphGfx[glyphIdx], -1, false, false, false, false, false);
-
-        x += CHAR_W;
-        ctx.cursor++;
+        for (int i = 0; i < len && col + i < MAP_COLS; i++)
+        {
+            int glyphIdx = findGlyphIndex(str[i]);
+            ctx.mapPtr[row * MAP_COLS + (col + i)] = ctx.tileIdx[glyphIdx];
+        }
     }
 }
 
 void commitText(TextEngine engine)
 {
-    TextCtx& ctx = ctxFor(engine);
-    oamUpdate(ctx.oam);
+    if (engine == TEXT_ENGINE_MAIN)
+        oamUpdate(ctxMain.oam);
+    // SUB: no-op, drawText() already wrote straight to VRAM.
 }
 
 void debugDrawGlyph1()
 {
-    u16* vram = (u16*)BG_BMP_RAM(0);
-    u8*  tileBytes = (u8*)ctxSub.glyphGfx[1]; // read back the 'A' tile from VRAM
-	
+    // Zoom-renders the 'A' tile from the SUB engine's BG tile storage
+    // onto the MAIN engine's bitmap, same debug view as before.
+    u16* vram      = (u16*)BG_BMP_RAM(0);
+    u16* gfxPtr    = (u16*)bgGetGfxPtr(ctxSub.bgId);
+    u8*  tileBytes = (u8*)(gfxPtr + 1 * 16);
+
     int scale = 10;
     for (int row = 0; row < 8; row++)
     {
@@ -114,5 +207,4 @@ void debugDrawGlyph1()
                 }
         }
     }
-	memcpy(DEBUG_block.tile, ctxSub.glyphGfx[1], 32);
 }
