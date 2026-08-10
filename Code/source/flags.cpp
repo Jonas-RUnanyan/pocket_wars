@@ -7,6 +7,7 @@
 #include "flags_sheet1.h"
 #include "flags_sheet2.h"
 #include "flags_sheet3.h"
+#include "flags_sheet4.h"
 
 #define COUNTRIES_PER_SHEET 8
 #define CELL_W_TILES 8      // 64px / 8
@@ -24,6 +25,7 @@ static const FlagSheet sheets[] = {
 	{ flags_sheet1Tiles, flags_sheet1SharedPal},
 	{ flags_sheet2Tiles, flags_sheet2SharedPal},
 	{ flags_sheet3Tiles, flags_sheet3SharedPal},
+	{ flags_sheet4Tiles, flags_sheet4SharedPal},
     // { flags_sheet1Tiles, flags_sheet1Pal },  // append as sheets are finished
 };
 #define SHEET_COUNT (int)(sizeof(sheets) / sizeof(sheets[0]))
@@ -31,6 +33,7 @@ static const FlagSheet sheets[] = {
 static u16* flagSlot      = nullptr;
 static int  loadedSheet   = -1;
 static int  loadedCountry = -1;
+static int  loadedIdeology = -1;
 
 void initFlags()
 {
@@ -56,15 +59,16 @@ static void loadCell(const FlagSheet& sheet, int cellRow, int cellCol)
     }
 }
 
-void showFlag(int countryId, int x, int y)
+void showFlag(int countryId, int ideology, int x, int y)
 {
     int sheetIdx = countryId / COUNTRIES_PER_SHEET;
     int rowIdx   = countryId % COUNTRIES_PER_SHEET;
-    int colIdx   = 0; // base flag only — ideology variants plug in here later
+    int colIdx   = ideology;  // sheet columns are ideology variants, in Ideology enum order
 
-    if (sheetIdx >= SHEET_COUNT) return; // not painted yet, show nothing
+    if (colIdx < 0 || colIdx >= 4) colIdx = 0;  // defensive clamp — sheet only has 4 columns
+    if (sheetIdx >= SHEET_COUNT) return;         // sheet not painted yet, show nothing
 
-    if (sheetIdx != loadedSheet || rowIdx != loadedCountry)
+    if (sheetIdx != loadedSheet || rowIdx != loadedCountry || colIdx != loadedIdeology)
     {
         const FlagSheet& sheet = sheets[sheetIdx];
 
@@ -75,8 +79,9 @@ void showFlag(int countryId, int x, int y)
         }
 
         loadCell(sheet, rowIdx, colIdx);
-        loadedSheet   = sheetIdx;
-        loadedCountry = rowIdx;
+        loadedSheet     = sheetIdx;
+        loadedCountry   = rowIdx;
+        loadedIdeology  = colIdx;
     }
 
     setSprite(SPR_SUB, 0, x, y, SpriteSize_64x32, SpriteColorFormat_256Color, flagSlot);

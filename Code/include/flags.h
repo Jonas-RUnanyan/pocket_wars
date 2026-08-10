@@ -3,7 +3,7 @@
 #define FLAGS_H
 
 void initFlags();
-void showFlag(int countryId, int x, int y);  // countryId = index into countries[]
+void showFlag(int countryId, int ideology, int x, int y);  // countryId = index into countries[]
 void hideFlag();
 
 #endif

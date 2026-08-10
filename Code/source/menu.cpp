@@ -7,7 +7,7 @@
 
 #define SCREEN_W 256
 #define SCREEN_H 192
-
+#define CHAR_W 8
 #undef RGB15
 #define BGR15(r,g,b) (0x8000 | ((b) << 10) | ((g) << 5) | (r))
 
@@ -111,7 +111,9 @@ void enterCountrySelectState()
 void enterGameState()
 {
     currentState = STATE_GAME;
-    videoSetMode(MODE_5_2D | DISPLAY_BG3_ACTIVE);
+    videoSetMode(MODE_5_2D | DISPLAY_BG3_ACTIVE | DISPLAY_SPR_ACTIVE | DISPLAY_SPR_1D);
+    clearText(TEXT_ENGINE_MAIN);
+    commitText(TEXT_ENGINE_MAIN);
     init_turn_system();
     needsRedraw = true;
 }

@@ -64,7 +64,8 @@ build/Code/source/flags.cpp.o: source/flags.cpp include/flags.h \
  C:/msys64/opt/wonderful/thirdparty/blocksds/core/libs/libnds/include/nds/arm9/teak/fifo.h \
  C:/msys64/opt/wonderful/thirdparty/blocksds/core/libs/libnds/include/nds/arm9/teak/tlf.h \
  build/Code/gfx/flags_sheet0.h build/Code/gfx/flags_sheet1.h \
- build/Code/gfx/flags_sheet2.h build/Code/gfx/flags_sheet3.h
+ build/Code/gfx/flags_sheet2.h build/Code/gfx/flags_sheet3.h \
+ build/Code/gfx/flags_sheet4.h
 include/flags.h:
 include/sprites.h:
 C:/msys64/opt/wonderful/thirdparty/blocksds/core/libs/libnds/include/nds.h:
@@ -134,3 +135,4 @@ build/Code/gfx/flags_sheet0.h:
 build/Code/gfx/flags_sheet1.h:
 build/Code/gfx/flags_sheet2.h:
 build/Code/gfx/flags_sheet3.h:
+build/Code/gfx/flags_sheet4.h:

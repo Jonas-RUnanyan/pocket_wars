@@ -1,6 +1,6 @@
 #include "province_owners.h"
 
-const unsigned char province_owners[PROVINCE_OWNER_COUNT] = {
+unsigned char province_owners[PROVINCE_OWNER_COUNT] = {
     2, 17, 21, 31, 31, 31, 31, 31, 29, 29, 26, 12, 12, 12, 12, 12,
     12, 12, 12, 18, 23, 24, 0, 27, 8, 8, 26, 8, 26, 26, 19, 26,
     26, 26, 26, 22, 26, 26, 26, 26, 26, 20, 26, 26, 26, 26, 27, 27,

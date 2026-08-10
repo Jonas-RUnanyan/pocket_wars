@@ -8,6 +8,7 @@ typedef enum {
     STATE_MAIN_MENU,
     STATE_COUNTRY_SELECT,
     STATE_GAME,
+    STATE_DECISIONS,   // NEW
 } GameScreenState;
 
 typedef struct {

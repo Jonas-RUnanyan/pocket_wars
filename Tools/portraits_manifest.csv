@@ -1,0 +1,54 @@
+PortraitID,CountryID,CountryName,Ideology,LeaderName,CurrentlyActive
+1,1,Spain,Democracy,Niceto Alcalá-Zamora,yes
+2,1,Spain,Fascism,Emilio Mola,yes
+3,1,Spain,Fascism,Francisco Franco,no
+4,1,Spain,Communism,José Díaz,yes
+5,1,Spain,Autocracy,Juan de Borbón,yes
+6,2,France,Democracy,Albert Lebrun,yes
+7,6,Germany,Fascism,Adolf Hitler,yes
+8,6,Germany,Democracy,Konrad Adenauer,no
+9,8,Italy,Fascism,Benito Mussolini,yes
+11,10,Hungary,Autocracy,Miklos Horthy,yes
+12,25,Soviet Union,Communism,Iosef Stalin,yes
+13,26,United Kingdom,Democracy,Stanley Baldwin,yes
+14,0,Portugal,Autocracy,António de Oliveria Salazar,yes
+15,2,France,Communism,Maurice Thorez,yes
+16,2,France,Autocracy,Napoleon VI,yes
+17,2,France,Fascism,Jacques Doriot,yes
+18,0,Portugal,Communism,Bento Gonçalves,yes
+19,0,Portugal,Communism,Álvaro Cunhal,no
+20,0,Portugal,Democracy,António Sérgio,yes
+21,0,Portugal,Fascism,Francisco Rolão Preto,yes
+22,3,Luxembourg,Democracy,Joseph Bech,yes
+23,3,Luxembourg,Democracy,Pierre Dupong,no
+24,3,Luxembourg,Fascism,Damian Kratzenberg,yes
+25,3,Luxembourg,Communism,Dominique Urbany,yes
+26,3,Luxembourg,Autocracy,Charlotte,yes
+27,4,Belgium,Democracy,Paul van Zeeland,yes
+28,4,Belgium,Fascism,Léon Degrelle,yes
+29,4,Belgium,Communism,Joseph Jacquemotte,yes
+30,4,Belgium,Autocracy,Leopold III,yes
+31,4,Belgium,Democracy,Hubert Pierlot,no
+32,5,Netherlands,Autocracy,Wilhemina,yes
+33,5,Netherlands,Democracy,Hendrikus Colijn,yes
+34,5,Netherlands,Fascism,Anton Mussert,yes
+35,5,Netherlands,Communism,Louis de Visser,yes
+36,6,Germany,Democracy,Toni Sender,yes
+37,6,Germany,Communism,Ernst Thälmann,yes
+38,6,Germany,Autocracy,Wilhelm II,yes
+39,7,Switzerland,Democracy,Swiss Federal Council,yes
+40,7,Switzerland,Fascism,Wilhelm Gustloff,yes
+41,7,Switzerland,Communism,Léon Nicole,yes
+42,8,Italy,Communism,Palmiro Togliatti,yes
+43,8,Italy,Democracy,Carlo Rosselli,yes
+44,8,Italy,Autocracy,Vittorio Emanuele III,yes
+45,9,Austria,Fascism,Kurt Schuschnigg,yes
+46,9,Austria,Communism,Johann Koplenig,yes
+47,9,Austria,Autocracy,Otto von Habsburg,yes
+48,9,Austria,Democracy,Otto Bauer,yes
+49,10,Hungary,Democracy,Károly Peyer,yes
+50,10,Hungary,Fascism,Fidél Pálffy,yes
+51,10,Hungary,Communism,Béla Kun,yes
+52,11,Czechoslovakia,Communism,Klement Gottwald,yes
+53,11,Czechoslovakia,Fascism,Radola Gajda,yes
+54,11,Czechoslovakia,Democracy,Edvard Beneš,yes

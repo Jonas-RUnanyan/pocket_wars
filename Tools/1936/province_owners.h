@@ -4,6 +4,6 @@
 #define PROVINCE_OWNER_COUNT 775
 #define PROVINCE_UNOWNED      0xFF
 
-extern const unsigned char province_owners[PROVINCE_OWNER_COUNT];
+extern unsigned char province_owners[PROVINCE_OWNER_COUNT];
 
 #endif

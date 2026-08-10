@@ -14,6 +14,8 @@
 #include "text_sprites.h"
 #include "sprites.h"
 #include "flags.h"
+#include "political_data.h"
+#include "decisions.h"
 
 #undef RGB15
 #define BGR15(r,g,b) (0x8000 | ((b) << 10) | ((g) << 5) | (r))
@@ -45,6 +47,25 @@ bool needsRedraw       = true;
 // Last touched province — persists on screen until next touch
 static u16  lastProvinceID   = 0xFFFF;
 static bool hasProvinceInfo  = false;
+
+typedef enum {
+    MAP_TERRAIN   = 0,
+    MAP_POLITICAL = 1,
+    MAP_TYPE_COUNT
+} MapType;
+
+MapType currentMapType = MAP_TERRAIN;
+
+#define POPUP_LINE_H 12
+#define POPUP_H      44   // two lines + padding
+#define POPUP_MIN_W  70
+
+static bool          countryPopupOpen  = false;
+static int           popupX = 0, popupY = 0;
+static int           popupBoxW = POPUP_MIN_W;
+static unsigned char popupCountryId = 0xFF;
+static char          popupLine1[24] = "";
+static char          popupLine2[24] = "";
 
 //---------------------------------------------
 // HELPERS
@@ -232,11 +253,12 @@ void blitPoliticalViewport()
 // TOGGLE MAP MODE
 //---------------------------------------------
 
-void toggleMapMode()
+void cycleMapType(int direction)
 {
-    showPoliticalMap  = !showPoliticalMap;
-    politicalMapDirty = true;
-    needsRedraw       = true;
+    currentMapType     = (MapType)(((int)currentMapType + direction + MAP_TYPE_COUNT) % MAP_TYPE_COUNT);
+    showPoliticalMap   = (currentMapType == MAP_POLITICAL);  // keeps existing blit logic elsewhere unchanged
+    politicalMapDirty  = true;
+    needsRedraw        = true;
 }
 
 //---------------------------------------------
@@ -246,8 +268,8 @@ void toggleMapMode()
 void updateCamera(int keys, int pressed)
 {
 
-    if (pressed & KEY_SELECT)
-        toggleMapMode();
+    if (pressed & KEY_L) cycleMapType(-1);
+	if (pressed & KEY_R) cycleMapType(+1);
 
     bool moved = false;
 
@@ -322,6 +344,128 @@ bool getTouchedProvince(u16* outID)
     return true;
 }
 
+
+void onCountryPopupInteract(unsigned char countryId)
+{
+    if (countryId == PLAYER_COUNTRY)
+        enterDecisionsState();
+    // else: diplomacy screen for other countries — not built yet
+}
+
+void handleCountryPopupTouch()
+{
+    if (!(keysDown() & KEY_TOUCH))
+        return;
+
+    touchPosition touch;
+    touchRead(&touch);
+
+    if (countryPopupOpen)
+    {
+        bool insideButton =
+            touch.px >= popupX && touch.px < popupX + popupBoxW &&
+            touch.py >= popupY && touch.py < popupY + POPUP_H;
+
+        if (insideButton)
+            onCountryPopupInteract(popupCountryId);
+
+        countryPopupOpen = false;
+        clearText(TEXT_ENGINE_MAIN);
+        commitText(TEXT_ENGINE_MAIN);
+        needsRedraw = true;
+        return;
+    }
+
+    u16 pid;
+    if (!getTouchedProvince(&pid) || provinces[pid].is_water)
+        return;
+
+    unsigned char oid = province_owners[pid];
+    if (oid == 0xFF)
+        return;
+
+    lastProvinceID  = pid;
+    hasProvinceInfo = true;
+
+    popupCountryId = oid;
+
+    if (oid == PLAYER_COUNTRY)
+    {
+        snprintf(popupLine1, sizeof(popupLine1), "INTERNAL");
+        snprintf(popupLine2, sizeof(popupLine2), "POLITICS");
+    }
+    else
+    {
+        snprintf(popupLine1, sizeof(popupLine1), "DIPLO WITH:");
+        snprintf(popupLine2, sizeof(popupLine2), "%s", countries[oid].name);
+    }
+
+    int w1 = textPixelWidth(popupLine1);
+    int w2 = textPixelWidth(popupLine2);
+    popupBoxW = (w1 > w2 ? w1 : w2) + 16;   // generous side padding, on purpose
+    if (popupBoxW < POPUP_MIN_W)  popupBoxW = POPUP_MIN_W;
+    if (popupBoxW > SCREEN_W - 4) popupBoxW = SCREEN_W - 4;
+
+    popupX = touch.px;
+    popupY = touch.py;
+    if (popupX + popupBoxW > SCREEN_W) popupX = SCREEN_W - popupBoxW;
+    if (popupY + POPUP_H   > SCREEN_H) popupY = SCREEN_H - POPUP_H;
+
+    countryPopupOpen = true;
+}
+
+void drawCountryPopup()
+{
+    if (!countryPopupOpen) return;
+
+    u16* vram  = (u16*)BG_BMP_RAM(0);
+    u16 fill   = BGR15(9, 11, 15);
+    u16 border = BGR15(20, 24, 31);
+
+    for (int py = popupY; py < popupY + POPUP_H; py++)
+        for (int px = popupX; px < popupX + popupBoxW; px++)
+        {
+            bool isBorder = (py == popupY || py == popupY + POPUP_H - 1 ||
+                              px == popupX || px == popupX + popupBoxW - 1);
+            vram[py * SCREEN_W + px] = isBorder ? border : fill;
+        }
+
+    clearText(TEXT_ENGINE_MAIN);
+    drawText(TEXT_ENGINE_MAIN, popupX + 8, popupY + 6, popupLine1);
+    drawText(TEXT_ENGINE_MAIN, popupX + 8, popupY + 6 + POPUP_LINE_H, popupLine2);
+    commitText(TEXT_ENGINE_MAIN);
+}
+
+
+// Ideology enum order must match political_editor.py's IDEOLOGIES list exactly —
+// it's what the generated Ideology enum in political_data.h is indexed against.
+static const char* IDEOLOGY_NAMES[IDEOLOGY_COUNT] = {
+    "FASCISM", "DEMOCRACY", "COMMUNISM", "AUTOCRACY"
+};
+
+// Name of whoever's actually ruling under a country's ruling ideology right now.
+// Defensive bounds check: COUNTRY_POLITICS_COUNT could drift from COUNTRY_COUNT if
+// political_editor.py's export gets out of sync with a later country_filler.py edit
+// (e.g. someone adds a country and forgets to re-run the political tool) — checking
+// against COUNTRY_POLITICS_COUNT specifically (the actual array size) rather than
+// COUNTRY_COUNT avoids reading past the end of country_politics[] if that happens.
+const char* get_ruling_leader_name(unsigned char country_id)
+{
+    if (country_id >= COUNTRY_POLITICS_COUNT) return "UNKNOWN";
+
+    const CountryPolitics* pol = &country_politics_runtime[country_id];
+    unsigned char leader_idx = pol->current_leader[pol->ruling_ideology];
+
+    if (leader_idx == LEADER_NONE) return "NO LEADER";
+    return leaders[leader_idx].name;
+}
+
+unsigned char get_ruling_ideology(unsigned char country_id)
+{
+    if (country_id >= COUNTRY_POLITICS_COUNT) return IDEOLOGY_AUTOCRACY; // arbitrary but consistent fallback
+    return country_politics_runtime[country_id].ruling_ideology;
+}
+
 //---------------------------------------------
 // SUB SCREEN — province info using Sprites
 //---------------------------------------------
@@ -331,66 +475,96 @@ void printProvinceInfo(u16 pid)
     if (pid >= PROVINCE_COUNT) return;
 
     char buf[64];
-    int curY = 8; // coordenada vertical inicial en píxeles
+    int curY = 8;
 
-    // Nombre e ID de la provincia
-    drawText(TEXT_ENGINE_SUB, 8, curY, provinces[pid].name);
-    curY += 10;
-    
-    snprintf(buf, sizeof(buf), "ID: %d", pid);
-    drawText(TEXT_ENGINE_SUB, 8, curY, buf);
-    curY += 12;
-
-    // Turno actual
     snprintf(buf, sizeof(buf), "TURN: %s (%d)", countries[CURRENT_TURN.current_country].name, CURRENT_TURN.current_country);
     drawText(TEXT_ENGINE_SUB, 8, curY, buf);
     curY += 14;
 
-    // Propietario
     unsigned char oid = province_owners[pid];
-    if (oid == 0xFF)
-	{
-		drawText(TEXT_ENGINE_SUB, 8, curY, "OWNER: NONE");
-		hideFlag();
-		curY += 12;
-	}
-	else
-	{
-		const Country* owner = &countries[oid];
-		snprintf(buf, sizeof(buf), "OWNER: %s", owner->name);
-		drawText(TEXT_ENGINE_SUB, 8, curY, buf);
-		showFlag(oid, 180, 8);   // top-right area of the panel — tune to taste
-		curY += 10;
 
-        drawText(TEXT_ENGINE_SUB, 8, curY, is_core(pid, oid) ? "(CORE)" : "(OCCUPIED)");
-        curY += 12;
+    // --- Shown in BOTH views ---
+    if (oid == 0xFF)
+    {
+        drawText(TEXT_ENGINE_SUB, 8, curY, "OWNER: NONE");
+        hideFlag();
+        curY += 14;
+    }
+    else
+    {
+        const Country* owner = &countries[oid];
+        snprintf(buf, sizeof(buf), "OWNER: %s", owner->name);
+        drawText(TEXT_ENGINE_SUB, 8, curY, buf);
+        showFlag(oid, get_ruling_ideology(oid), 180, 8);
+        curY += 14;
     }
 
-    // Cores
-    unsigned char cores[32];
-    int n = get_core_countries(pid, cores, 32);
-
-    if (n > 0)
+    if (currentMapType == MAP_TERRAIN)
     {
-        drawText(TEXT_ENGINE_SUB, 8, curY, "CORES:");
+        // --- Province view: name, id, cores ---
+        drawText(TEXT_ENGINE_SUB, 8, curY, provinces[pid].name);
         curY += 10;
-        for (int i = 0; i < n && i < 4; i++)
+
+        snprintf(buf, sizeof(buf), "ID: %d", pid);
+        drawText(TEXT_ENGINE_SUB, 8, curY, buf);
+        curY += 12;
+
+        if (oid != 0xFF)
         {
-            const Country* c = &countries[cores[i]];
-            if (c)
+            drawText(TEXT_ENGINE_SUB, 8, curY, is_core(pid, oid) ? "(CORE)" : "(OCCUPIED)");
+            curY += 12;
+        }
+
+        unsigned char cores[32];
+        int n = get_core_countries(pid, cores, 32);
+        if (n > 0)
+        {
+            drawText(TEXT_ENGINE_SUB, 8, curY, "CORES:");
+            curY += 10;
+            for (int i = 0; i < n && i < 4; i++)
             {
+                const Country* c = &countries[cores[i]];
                 snprintf(buf, sizeof(buf), " - %s", c->name);
                 drawText(TEXT_ENGINE_SUB, 12, curY, buf);
                 curY += 10;
             }
         }
-    }
 
-    if (provinces[pid].is_water)
+        if (provinces[pid].is_water)
+            drawText(TEXT_ENGINE_SUB, 8, curY, "[WATER]");
+    }
+    else // MAP_POLITICAL
     {
-        drawText(TEXT_ENGINE_SUB, 8, curY, "[WATER]");
+        // --- Country view: leader, stability, politics ---
+        if (oid != 0xFF && oid < COUNTRY_POLITICS_COUNT)
+        {
+            const CountryPolitics* pol = &country_politics_runtime[oid]; 
+
+            snprintf(buf, sizeof(buf), "IDEOLOGY: %s", IDEOLOGY_NAMES[pol->ruling_ideology]);
+            drawText(TEXT_ENGINE_SUB, 8, curY, buf);
+            curY += 10;
+
+            snprintf(buf, sizeof(buf), "LEADER: %s", get_ruling_leader_name(oid));
+            drawText(TEXT_ENGINE_SUB, 8, curY, buf);
+            curY += 10;
+
+            snprintf(buf, sizeof(buf), "STABILITY: %d%%", pol->stability);
+            drawText(TEXT_ENGINE_SUB, 8, curY, buf);
+            curY += 12;
+
+            drawText(TEXT_ENGINE_SUB, 8, curY, "SUPPORT:");
+            curY += 10;
+            drawIdeologyBar(8, curY, 16, pol->ideology_support); // 16 tiles = 128px wide
+        }
+        else if (oid == 0xFF)
+        {
+            drawText(TEXT_ENGINE_SUB, 8, curY, "NO POLITICAL DATA");
+        }
     }
 }
+
+
+
 
 //---------------------------------------------
 // MAIN
@@ -423,20 +597,27 @@ int main(void)
                 updateCamera(keys, pressed);
 
                 if (CURRENT_TURN.awaiting_orders)
-                {
-                    u16 pid;
-                    if (getTouchedProvince(&pid))
-                    {
-                        lastProvinceID  = pid;
-                        hasProvinceInfo = true;
+				{
+					if (currentMapType == MAP_POLITICAL)
+					{
+						handleCountryPopupTouch();
+					}
+					else
+					{
+						u16 pid;
+						if (getTouchedProvince(&pid))
+						{
+							lastProvinceID  = pid;
+							hasProvinceInfo = true;
 /*
-                        if (provinces[pid].is_water == 0)
-                        {
-                            province_owners[pid] = CURRENT_TURN.current_country;
-                            needsRedraw = true;
-                        }*/
-                    }
-                }
+							if (provinces[pid].is_water == 0)
+							{
+								province_owners[pid] = CURRENT_TURN.current_country;
+								needsRedraw = true;
+							}*/
+						}
+					}
+				}
 
                 pass_turn(pressed);
 
@@ -448,6 +629,7 @@ int main(void)
                         blitTerrainViewport();
                     needsRedraw = false;
                 }
+				drawCountryPopup();
 
                 // Renderizar información utilizando tus Sprites (pantalla superior / motor SUB)
                 clearText(TEXT_ENGINE_SUB);
@@ -457,6 +639,10 @@ int main(void)
                 }
                 commitText(TEXT_ENGINE_SUB);
                 break;
+			case STATE_DECISIONS:
+				updateDecisionsState(keys, pressed);   // was: updateDecisionsState(pressed)
+				break;
         }
     }
 }
+

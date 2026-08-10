@@ -1,0 +1,371 @@
+{
+  "decisions": {
+    "0": {
+      "title": "Return of the Habsburgs",
+      "flavor_text": "Gott erhalte Otto den Kaiser",
+      "effect_text": "Otto von Habsburg becomes head of state.",
+      "prerequisites_text": "",
+      "once_only": true,
+      "cooldown_turns": 0,
+      "visibility": {
+        "type": "LEAF",
+        "condition": "COUNTRY_IS",
+        "params": {
+          "country_id": 9
+        }
+      },
+      "availability": null,
+      "effects": [
+        {
+          "effect": "SET_RULING_IDEOLOGY",
+          "params": {
+            "ideology": 3
+          }
+        },
+        {
+          "effect": "ADD_STABILITY",
+          "params": {
+            "delta": -50
+          }
+        }
+      ]
+    },
+    "1": {
+      "title": "Return of Hungary",
+      "flavor_text": "We have been separated from our hungarian brothers for too long. But that is about to change.",
+      "effect_text": "Austria Annexes the Kingdom of Hungary.",
+      "prerequisites_text": "",
+      "once_only": true,
+      "cooldown_turns": 0,
+      "visibility": {
+        "type": "AND",
+        "children": [
+          {
+            "type": "LEAF",
+            "condition": "COUNTRY_IS",
+            "params": {
+              "country_id": 9
+            }
+          },
+          {
+            "type": "LEAF",
+            "condition": "RULING_IS",
+            "params": {
+              "ideology": 3
+            }
+          }
+        ]
+      },
+      "availability": null,
+      "effects": [
+        {
+          "effect": "SET_PROVINCE_OWNER",
+          "params": {
+            "province_id": 69,
+            "country_id": -1
+          }
+        },
+        {
+          "effect": "SET_PROVINCE_OWNER",
+          "params": {
+            "province_id": 253,
+            "country_id": -1
+          }
+        },
+        {
+          "effect": "SET_PROVINCE_OWNER",
+          "params": {
+            "province_id": 452,
+            "country_id": -1
+          }
+        },
+        {
+          "effect": "SET_PROVINCE_OWNER",
+          "params": {
+            "province_id": 451,
+            "country_id": -1
+          }
+        },
+        {
+          "effect": "SET_PROVINCE_OWNER",
+          "params": {
+            "province_id": 68,
+            "country_id": -1
+          }
+        }
+      ]
+    },
+    "2": {
+      "title": "Stabilize the country",
+      "flavor_text": "We are unstable. fuck",
+      "effect_text": "",
+      "prerequisites_text": "",
+      "once_only": false,
+      "cooldown_turns": 2,
+      "visibility": null,
+      "availability": null,
+      "effects": [
+        {
+          "effect": "ADD_STABILITY",
+          "params": {
+            "delta": 20
+          }
+        }
+      ]
+    },
+    "3": {
+      "title": "Annex Czechoslovakia",
+      "flavor_text": "Edvard Benes tonto panoli",
+      "effect_text": "",
+      "prerequisites_text": "",
+      "once_only": true,
+      "cooldown_turns": 0,
+      "visibility": {
+        "type": "AND",
+        "children": [
+          {
+            "type": "LEAF",
+            "condition": "COUNTRY_IS",
+            "params": {
+              "country_id": 9
+            }
+          },
+          {
+            "type": "LEAF",
+            "condition": "RULING_IS",
+            "params": {
+              "ideology": 3
+            }
+          }
+        ]
+      },
+      "availability": {
+        "type": "REF",
+        "name": "STABLE_AUH"
+      },
+      "effects": [
+        {
+          "effect": "SET_PROVINCE_OWNER",
+          "params": {
+            "province_id": 323,
+            "country_id": -1
+          }
+        },
+        {
+          "effect": "SET_PROVINCE_OWNER",
+          "params": {
+            "province_id": 450,
+            "country_id": -1
+          }
+        },
+        {
+          "effect": "SET_PROVINCE_OWNER",
+          "params": {
+            "province_id": 413,
+            "country_id": -1
+          }
+        },
+        {
+          "effect": "SET_PROVINCE_OWNER",
+          "params": {
+            "province_id": 336,
+            "country_id": -1
+          }
+        },
+        {
+          "effect": "SET_PROVINCE_OWNER",
+          "params": {
+            "province_id": 337,
+            "country_id": -1
+          }
+        },
+        {
+          "effect": "SET_PROVINCE_OWNER",
+          "params": {
+            "province_id": 330,
+            "country_id": -1
+          }
+        },
+        {
+          "effect": "SET_PROVINCE_OWNER",
+          "params": {
+            "province_id": 328,
+            "country_id": -1
+          }
+        },
+        {
+          "effect": "SET_PROVINCE_OWNER",
+          "params": {
+            "province_id": 312,
+            "country_id": -1
+          }
+        },
+        {
+          "effect": "SET_PROVINCE_OWNER",
+          "params": {
+            "province_id": 329,
+            "country_id": -1
+          }
+        },
+        {
+          "effect": "SET_PROVINCE_OWNER",
+          "params": {
+            "province_id": 332,
+            "country_id": -1
+          }
+        }
+      ]
+    },
+    "4": {
+      "title": "Partition Poland",
+      "flavor_text": "Get rekt lmaooooooo",
+      "effect_text": "",
+      "prerequisites_text": "",
+      "once_only": true,
+      "cooldown_turns": 0,
+      "visibility": {
+        "type": "REF",
+        "name": "STABLE_AUH"
+      },
+      "availability": {
+        "type": "AND",
+        "children": [
+          {
+            "type": "LEAF",
+            "condition": "CONTROLS_PROVINCE",
+            "params": {
+              "province_id": 413
+            }
+          }
+        ]
+      },
+      "effects": [
+        {
+          "effect": "SET_PROVINCE_OWNER",
+          "params": {
+            "province_id": 410,
+            "country_id": -1
+          }
+        },
+        {
+          "effect": "SET_PROVINCE_OWNER",
+          "params": {
+            "province_id": 412,
+            "country_id": -1
+          }
+        },
+        {
+          "effect": "SET_PROVINCE_OWNER",
+          "params": {
+            "province_id": 417,
+            "country_id": -1
+          }
+        },
+        {
+          "effect": "SET_PROVINCE_OWNER",
+          "params": {
+            "province_id": 407,
+            "country_id": 6
+          }
+        },
+        {
+          "effect": "SET_PROVINCE_OWNER",
+          "params": {
+            "province_id": 371,
+            "country_id": 6
+          }
+        },
+        {
+          "effect": "SET_PROVINCE_OWNER",
+          "params": {
+            "province_id": 398,
+            "country_id": 6
+          }
+        },
+        {
+          "effect": "SET_PROVINCE_OWNER",
+          "params": {
+            "province_id": 339,
+            "country_id": 6
+          }
+        }
+      ]
+    },
+    "5": {
+      "title": "Restore the Empire",
+      "flavor_text": "",
+      "effect_text": "",
+      "prerequisites_text": "",
+      "once_only": true,
+      "cooldown_turns": 0,
+      "visibility": {
+        "type": "REF",
+        "name": "STABLE_AUH"
+      },
+      "availability": {
+        "type": "AND",
+        "children": [
+          {
+            "type": "LEAF",
+            "condition": "CONTROLS_PROVINCE",
+            "params": {
+              "province_id": 413
+            }
+          },
+          {
+            "type": "LEAF",
+            "condition": "CONTROLS_PROVINCE",
+            "params": {
+              "province_id": 328
+            }
+          },
+          {
+            "type": "LEAF",
+            "condition": "CONTROLS_PROVINCE",
+            "params": {
+              "province_id": 410
+            }
+          }
+        ]
+      },
+      "effects": [
+        {
+          "effect": "ADD_SUPPORT",
+          "params": {
+            "ideology": 3,
+            "delta": 100
+          }
+        }
+      ]
+    }
+  },
+  "next_decision_id": 6,
+  "named_conditions": {
+    "STABLE_AUH": {
+      "type": "AND",
+      "children": [
+        {
+          "type": "LEAF",
+          "condition": "COUNTRY_IS",
+          "params": {
+            "country_id": 9
+          }
+        },
+        {
+          "type": "LEAF",
+          "condition": "STABILITY_GE",
+          "params": {
+            "value": 75
+          }
+        },
+        {
+          "type": "LEAF",
+          "condition": "CONTROLS_PROVINCE",
+          "params": {
+            "province_id": 253
+          }
+        }
+      ]
+    }
+  }
+}

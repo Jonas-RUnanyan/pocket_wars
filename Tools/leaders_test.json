@@ -1,0 +1,1339 @@
+{
+  "countries": [
+    {
+      "id": 0,
+      "name": "Portugal"
+    },
+    {
+      "id": 1,
+      "name": "Spain"
+    },
+    {
+      "id": 2,
+      "name": "France"
+    },
+    {
+      "id": 3,
+      "name": "Luxembourg"
+    },
+    {
+      "id": 4,
+      "name": "Belgium"
+    },
+    {
+      "id": 5,
+      "name": "Netherlands"
+    },
+    {
+      "id": 6,
+      "name": "Germany"
+    },
+    {
+      "id": 7,
+      "name": "Switzerland"
+    },
+    {
+      "id": 8,
+      "name": "Italy"
+    },
+    {
+      "id": 9,
+      "name": "Austria"
+    },
+    {
+      "id": 10,
+      "name": "Hungary"
+    },
+    {
+      "id": 11,
+      "name": "Czechoslovakia"
+    },
+    {
+      "id": 12,
+      "name": "Yugoslavia"
+    },
+    {
+      "id": 13,
+      "name": "Albania"
+    },
+    {
+      "id": 14,
+      "name": "Greece"
+    },
+    {
+      "id": 15,
+      "name": "Bulgaria"
+    },
+    {
+      "id": 16,
+      "name": "Romania"
+    },
+    {
+      "id": 17,
+      "name": "Poland"
+    },
+    {
+      "id": 18,
+      "name": "Lithuania"
+    },
+    {
+      "id": 19,
+      "name": "Latvia"
+    },
+    {
+      "id": 20,
+      "name": "Estonia"
+    },
+    {
+      "id": 21,
+      "name": "Denmark"
+    },
+    {
+      "id": 22,
+      "name": "Sweden"
+    },
+    {
+      "id": 23,
+      "name": "Norway"
+    },
+    {
+      "id": 24,
+      "name": "Finland"
+    },
+    {
+      "id": 25,
+      "name": "Soviet Union"
+    },
+    {
+      "id": 26,
+      "name": "United Kingdom"
+    },
+    {
+      "id": 27,
+      "name": "Ireland"
+    },
+    {
+      "id": 28,
+      "name": "Turkey"
+    },
+    {
+      "id": 29,
+      "name": "Iraq"
+    },
+    {
+      "id": 30,
+      "name": "Saudi Arabia"
+    },
+    {
+      "id": 31,
+      "name": "Persia"
+    }
+  ],
+  "politics": {
+    "0": {
+      "support": [
+        40,
+        20,
+        20,
+        20
+      ],
+      "ruling": 3,
+      "stability": 73,
+      "current_leader": [
+        21,
+        20,
+        18,
+        14
+      ]
+    },
+    "1": {
+      "support": [
+        50,
+        35,
+        10,
+        5
+      ],
+      "ruling": 1,
+      "stability": 25,
+      "current_leader": [
+        2,
+        1,
+        4,
+        5
+      ]
+    },
+    "2": {
+      "support": [
+        8,
+        61,
+        23,
+        8
+      ],
+      "ruling": 1,
+      "stability": 50,
+      "current_leader": [
+        17,
+        6,
+        15,
+        16
+      ]
+    },
+    "3": {
+      "support": [
+        25,
+        25,
+        25,
+        25
+      ],
+      "ruling": 1,
+      "stability": 50,
+      "current_leader": [
+        24,
+        22,
+        25,
+        26
+      ]
+    },
+    "4": {
+      "support": [
+        25,
+        25,
+        25,
+        25
+      ],
+      "ruling": 1,
+      "stability": 50,
+      "current_leader": [
+        28,
+        27,
+        29,
+        30
+      ]
+    },
+    "5": {
+      "support": [
+        25,
+        25,
+        25,
+        25
+      ],
+      "ruling": 1,
+      "stability": 50,
+      "current_leader": [
+        34,
+        33,
+        35,
+        32
+      ]
+    },
+    "6": {
+      "support": [
+        40,
+        20,
+        20,
+        20
+      ],
+      "ruling": 0,
+      "stability": 50,
+      "current_leader": [
+        7,
+        36,
+        37,
+        38
+      ]
+    },
+    "7": {
+      "support": [
+        25,
+        25,
+        25,
+        25
+      ],
+      "ruling": 3,
+      "stability": 50,
+      "current_leader": [
+        40,
+        39,
+        41,
+        null
+      ]
+    },
+    "8": {
+      "support": [
+        25,
+        25,
+        25,
+        25
+      ],
+      "ruling": 0,
+      "stability": 50,
+      "current_leader": [
+        9,
+        43,
+        42,
+        44
+      ]
+    },
+    "9": {
+      "support": [
+        33,
+        25,
+        21,
+        21
+      ],
+      "ruling": 0,
+      "stability": 50,
+      "current_leader": [
+        45,
+        48,
+        46,
+        47
+      ]
+    },
+    "10": {
+      "support": [
+        25,
+        25,
+        25,
+        25
+      ],
+      "ruling": 3,
+      "stability": 50,
+      "current_leader": [
+        50,
+        49,
+        51,
+        11
+      ]
+    },
+    "11": {
+      "support": [
+        25,
+        25,
+        25,
+        25
+      ],
+      "ruling": 3,
+      "stability": 50,
+      "current_leader": [
+        53,
+        54,
+        52,
+        null
+      ]
+    },
+    "12": {
+      "support": [
+        25,
+        25,
+        25,
+        25
+      ],
+      "ruling": 3,
+      "stability": 50,
+      "current_leader": [
+        55,
+        58,
+        59,
+        56
+      ]
+    },
+    "13": {
+      "support": [
+        25,
+        25,
+        25,
+        25
+      ],
+      "ruling": 3,
+      "stability": 50,
+      "current_leader": [
+        63,
+        61,
+        62,
+        60
+      ]
+    },
+    "14": {
+      "support": [
+        25,
+        25,
+        25,
+        25
+      ],
+      "ruling": 3,
+      "stability": 50,
+      "current_leader": [
+        66,
+        64,
+        68,
+        65
+      ]
+    },
+    "15": {
+      "support": [
+        25,
+        25,
+        25,
+        25
+      ],
+      "ruling": 3,
+      "stability": 50,
+      "current_leader": [
+        71,
+        72,
+        69,
+        70
+      ]
+    },
+    "16": {
+      "support": [
+        25,
+        25,
+        25,
+        25
+      ],
+      "ruling": 3,
+      "stability": 50,
+      "current_leader": [
+        76,
+        75,
+        74,
+        73
+      ]
+    },
+    "17": {
+      "support": [
+        25,
+        25,
+        25,
+        25
+      ],
+      "ruling": 3,
+      "stability": 50,
+      "current_leader": [
+        80,
+        78,
+        79,
+        77
+      ]
+    },
+    "18": {
+      "support": [
+        25,
+        25,
+        25,
+        25
+      ],
+      "ruling": 3,
+      "stability": 50,
+      "current_leader": [
+        82,
+        84,
+        83,
+        81
+      ]
+    },
+    "19": {
+      "support": [
+        25,
+        25,
+        25,
+        25
+      ],
+      "ruling": 3,
+      "stability": 50,
+      "current_leader": [
+        88,
+        86,
+        87,
+        85
+      ]
+    },
+    "20": {
+      "support": [
+        25,
+        25,
+        25,
+        25
+      ],
+      "ruling": 3,
+      "stability": 50,
+      "current_leader": [
+        90,
+        92,
+        91,
+        89
+      ]
+    },
+    "21": {
+      "support": [
+        25,
+        25,
+        25,
+        25
+      ],
+      "ruling": 1,
+      "stability": 50,
+      "current_leader": [
+        94,
+        93,
+        95,
+        96
+      ]
+    },
+    "22": {
+      "support": [
+        25,
+        25,
+        25,
+        25
+      ],
+      "ruling": 1,
+      "stability": 50,
+      "current_leader": [
+        99,
+        100,
+        98,
+        97
+      ]
+    },
+    "23": {
+      "support": [
+        25,
+        25,
+        25,
+        25
+      ],
+      "ruling": 1,
+      "stability": 50,
+      "current_leader": [
+        102,
+        101,
+        103,
+        104
+      ]
+    },
+    "24": {
+      "support": [
+        25,
+        25,
+        25,
+        25
+      ],
+      "ruling": 1,
+      "stability": 50,
+      "current_leader": [
+        106,
+        108,
+        105,
+        107
+      ]
+    },
+    "25": {
+      "support": [
+        0,
+        0,
+        100,
+        0
+      ],
+      "ruling": 2,
+      "stability": 50,
+      "current_leader": [
+        109,
+        110,
+        12,
+        113
+      ]
+    },
+    "26": {
+      "support": [
+        25,
+        25,
+        25,
+        25
+      ],
+      "ruling": 1,
+      "stability": 50,
+      "current_leader": [
+        114,
+        13,
+        115,
+        116
+      ]
+    },
+    "27": {
+      "support": [
+        25,
+        25,
+        25,
+        25
+      ],
+      "ruling": 1,
+      "stability": 50,
+      "current_leader": [
+        120,
+        121,
+        119,
+        122
+      ]
+    },
+    "28": {
+      "support": [
+        25,
+        25,
+        25,
+        25
+      ],
+      "ruling": 3,
+      "stability": 50,
+      "current_leader": [
+        124,
+        126,
+        127,
+        123
+      ]
+    },
+    "29": {
+      "support": [
+        25,
+        25,
+        25,
+        25
+      ],
+      "ruling": 3,
+      "stability": 50,
+      "current_leader": [
+        131,
+        132,
+        130,
+        129
+      ]
+    },
+    "30": {
+      "support": [
+        25,
+        25,
+        25,
+        25
+      ],
+      "ruling": 3,
+      "stability": 50,
+      "current_leader": [
+        135,
+        134,
+        null,
+        133
+      ]
+    },
+    "31": {
+      "support": [
+        25,
+        25,
+        25,
+        25
+      ],
+      "ruling": 3,
+      "stability": 50,
+      "current_leader": [
+        138,
+        137,
+        139,
+        136
+      ]
+    }
+  },
+  "leaders": {
+    "1": {
+      "name": "Niceto Alcal\u00e1-Zamora",
+      "country_id": 1,
+      "ideology": 1
+    },
+    "2": {
+      "name": "Emilio Mola",
+      "country_id": 1,
+      "ideology": 0
+    },
+    "3": {
+      "name": "Francisco Franco",
+      "country_id": 1,
+      "ideology": 0
+    },
+    "4": {
+      "name": "Jos\u00e9 D\u00edaz",
+      "country_id": 1,
+      "ideology": 2
+    },
+    "5": {
+      "name": "Juan de Borb\u00f3n",
+      "country_id": 1,
+      "ideology": 3
+    },
+    "6": {
+      "name": "Albert Lebrun",
+      "country_id": 2,
+      "ideology": 1
+    },
+    "7": {
+      "name": "Adolf Hitler",
+      "country_id": 6,
+      "ideology": 0
+    },
+    "8": {
+      "name": "Konrad Adenauer",
+      "country_id": 6,
+      "ideology": 1
+    },
+    "9": {
+      "name": "Benito Mussolini",
+      "country_id": 8,
+      "ideology": 0
+    },
+    "11": {
+      "name": "Miklos Horthy",
+      "country_id": 10,
+      "ideology": 3
+    },
+    "12": {
+      "name": "Iosef Stalin",
+      "country_id": 25,
+      "ideology": 2
+    },
+    "13": {
+      "name": "Stanley Baldwin",
+      "country_id": 26,
+      "ideology": 1
+    },
+    "14": {
+      "name": "Ant\u00f3nio de Oliveria Salazar",
+      "country_id": 0,
+      "ideology": 3
+    },
+    "15": {
+      "name": "Maurice Thorez",
+      "country_id": 2,
+      "ideology": 2
+    },
+    "16": {
+      "name": "Napoleon VI",
+      "country_id": 2,
+      "ideology": 3
+    },
+    "17": {
+      "name": "Jacques Doriot",
+      "country_id": 2,
+      "ideology": 0
+    },
+    "18": {
+      "name": "Bento Gon\u00e7alves",
+      "country_id": 0,
+      "ideology": 2
+    },
+    "19": {
+      "name": "\u00c1lvaro Cunhal",
+      "country_id": 0,
+      "ideology": 2
+    },
+    "20": {
+      "name": "Ant\u00f3nio S\u00e9rgio",
+      "country_id": 0,
+      "ideology": 1
+    },
+    "21": {
+      "name": "Francisco Rol\u00e3o Preto",
+      "country_id": 0,
+      "ideology": 0
+    },
+    "22": {
+      "name": "Joseph Bech",
+      "country_id": 3,
+      "ideology": 1
+    },
+    "23": {
+      "name": "Pierre Dupong",
+      "country_id": 3,
+      "ideology": 1
+    },
+    "24": {
+      "name": "Damian Kratzenberg",
+      "country_id": 3,
+      "ideology": 0
+    },
+    "25": {
+      "name": "Dominique Urbany",
+      "country_id": 3,
+      "ideology": 2
+    },
+    "26": {
+      "name": "Charlotte",
+      "country_id": 3,
+      "ideology": 3
+    },
+    "27": {
+      "name": "Paul van Zeeland",
+      "country_id": 4,
+      "ideology": 1
+    },
+    "28": {
+      "name": "L\u00e9on Degrelle",
+      "country_id": 4,
+      "ideology": 0
+    },
+    "29": {
+      "name": "Joseph Jacquemotte",
+      "country_id": 4,
+      "ideology": 2
+    },
+    "30": {
+      "name": "Leopold III",
+      "country_id": 4,
+      "ideology": 3
+    },
+    "31": {
+      "name": "Hubert Pierlot",
+      "country_id": 4,
+      "ideology": 1
+    },
+    "32": {
+      "name": "Wilhemina",
+      "country_id": 5,
+      "ideology": 3
+    },
+    "33": {
+      "name": "Hendrikus Colijn",
+      "country_id": 5,
+      "ideology": 1
+    },
+    "34": {
+      "name": "Anton Mussert",
+      "country_id": 5,
+      "ideology": 0
+    },
+    "35": {
+      "name": "Louis de Visser",
+      "country_id": 5,
+      "ideology": 2
+    },
+    "36": {
+      "name": "Toni Sender",
+      "country_id": 6,
+      "ideology": 1
+    },
+    "37": {
+      "name": "Ernst Th\u00e4lmann",
+      "country_id": 6,
+      "ideology": 2
+    },
+    "38": {
+      "name": "Wilhelm II",
+      "country_id": 6,
+      "ideology": 3
+    },
+    "39": {
+      "name": "Swiss Federal Council",
+      "country_id": 7,
+      "ideology": 1
+    },
+    "40": {
+      "name": "Wilhelm Gustloff",
+      "country_id": 7,
+      "ideology": 0
+    },
+    "41": {
+      "name": "L\u00e9on Nicole",
+      "country_id": 7,
+      "ideology": 2
+    },
+    "42": {
+      "name": "Palmiro Togliatti",
+      "country_id": 8,
+      "ideology": 2
+    },
+    "43": {
+      "name": "Carlo Rosselli",
+      "country_id": 8,
+      "ideology": 1
+    },
+    "44": {
+      "name": "Vittorio Emanuele III",
+      "country_id": 8,
+      "ideology": 3
+    },
+    "45": {
+      "name": "Kurt Schuschnigg",
+      "country_id": 9,
+      "ideology": 0
+    },
+    "46": {
+      "name": "Johann Koplenig",
+      "country_id": 9,
+      "ideology": 2
+    },
+    "47": {
+      "name": "Otto von Habsburg",
+      "country_id": 9,
+      "ideology": 3
+    },
+    "48": {
+      "name": "Otto Bauer",
+      "country_id": 9,
+      "ideology": 1
+    },
+    "49": {
+      "name": "K\u00e1roly Peyer",
+      "country_id": 10,
+      "ideology": 1
+    },
+    "50": {
+      "name": "Fid\u00e9l P\u00e1lffy",
+      "country_id": 10,
+      "ideology": 0
+    },
+    "51": {
+      "name": "B\u00e9la Kun",
+      "country_id": 10,
+      "ideology": 2
+    },
+    "52": {
+      "name": "Klement Gottwald",
+      "country_id": 11,
+      "ideology": 2
+    },
+    "53": {
+      "name": "Radola Gajda",
+      "country_id": 11,
+      "ideology": 0
+    },
+    "54": {
+      "name": "Edvard Bene\u0161",
+      "country_id": 11,
+      "ideology": 1
+    },
+    "55": {
+      "name": "Dimitrije Ljoti\u0107",
+      "country_id": 12,
+      "ideology": 0
+    },
+    "56": {
+      "name": "Milan Stojadinovi\u0107",
+      "country_id": 12,
+      "ideology": 3
+    },
+    "57": {
+      "name": "Peter II",
+      "country_id": 12,
+      "ideology": 3
+    },
+    "58": {
+      "name": "Ljuba Davidovi\u0107",
+      "country_id": 12,
+      "ideology": 1
+    },
+    "59": {
+      "name": "Josip Broz Tito",
+      "country_id": 12,
+      "ideology": 2
+    },
+    "60": {
+      "name": "Zog I",
+      "country_id": 13,
+      "ideology": 3
+    },
+    "61": {
+      "name": "Mehdi Frash\u00ebri",
+      "country_id": 13,
+      "ideology": 1
+    },
+    "62": {
+      "name": "Ali Kelmendi",
+      "country_id": 13,
+      "ideology": 2
+    },
+    "63": {
+      "name": "Tefik Mborja",
+      "country_id": 13,
+      "ideology": 0
+    },
+    "64": {
+      "name": "Konstantinos Demertzis",
+      "country_id": 14,
+      "ideology": 1
+    },
+    "65": {
+      "name": "Ioannis Metax\u00e1s",
+      "country_id": 14,
+      "ideology": 3
+    },
+    "66": {
+      "name": "Ioannis Metax\u00e1s",
+      "country_id": 14,
+      "ideology": 0
+    },
+    "67": {
+      "name": "George II",
+      "country_id": 14,
+      "ideology": 3
+    },
+    "68": {
+      "name": "Nikos Zachariadis",
+      "country_id": 14,
+      "ideology": 2
+    },
+    "69": {
+      "name": "Georgi Dimitrov",
+      "country_id": 15,
+      "ideology": 2
+    },
+    "70": {
+      "name": "Boris III",
+      "country_id": 15,
+      "ideology": 3
+    },
+    "71": {
+      "name": "Alexander Tsankov",
+      "country_id": 15,
+      "ideology": 0
+    },
+    "72": {
+      "name": "Atanas Burov",
+      "country_id": 15,
+      "ideology": 1
+    },
+    "73": {
+      "name": "Carol II",
+      "country_id": 16,
+      "ideology": 3
+    },
+    "74": {
+      "name": "Boris Stefanov",
+      "country_id": 16,
+      "ideology": 2
+    },
+    "75": {
+      "name": "Iuliu Maniu",
+      "country_id": 16,
+      "ideology": 1
+    },
+    "76": {
+      "name": "Corneliu Zelea Codreanu",
+      "country_id": 16,
+      "ideology": 0
+    },
+    "77": {
+      "name": "Ignacy Mo\u015bcicki",
+      "country_id": 17,
+      "ideology": 3
+    },
+    "78": {
+      "name": "W\u0142adys\u0142aw Sikorski",
+      "country_id": 17,
+      "ideology": 1
+    },
+    "79": {
+      "name": "Boles\u0142aw Bierut",
+      "country_id": 17,
+      "ideology": 2
+    },
+    "80": {
+      "name": "Boles\u0142aw Piasecki",
+      "country_id": 17,
+      "ideology": 0
+    },
+    "81": {
+      "name": "Antanas Smetona",
+      "country_id": 18,
+      "ideology": 3
+    },
+    "82": {
+      "name": "Augustinas Voldemaras",
+      "country_id": 18,
+      "ideology": 0
+    },
+    "83": {
+      "name": "Antanas Snie\u010dkus",
+      "country_id": 18,
+      "ideology": 2
+    },
+    "84": {
+      "name": "Kazys Grinius",
+      "country_id": 18,
+      "ideology": 1
+    },
+    "85": {
+      "name": "K\u0101rlis Ulmanis",
+      "country_id": 19,
+      "ideology": 3
+    },
+    "86": {
+      "name": "Br\u016bno Kalni\u0146\u0161",
+      "country_id": 19,
+      "ideology": 1
+    },
+    "87": {
+      "name": "J\u0101nis Rudzutaks",
+      "country_id": 19,
+      "ideology": 2
+    },
+    "88": {
+      "name": "Gustavs Celmi\u0146\u0161",
+      "country_id": 19,
+      "ideology": 0
+    },
+    "89": {
+      "name": "Konstantin P\u00e4ts",
+      "country_id": 20,
+      "ideology": 3
+    },
+    "90": {
+      "name": "Andres Larka",
+      "country_id": 20,
+      "ideology": 0
+    },
+    "91": {
+      "name": "Nigol Andresen",
+      "country_id": 20,
+      "ideology": 2
+    },
+    "92": {
+      "name": "Jaan T\u00f5nisson",
+      "country_id": 20,
+      "ideology": 1
+    },
+    "93": {
+      "name": "Thorvald Stauning",
+      "country_id": 21,
+      "ideology": 1
+    },
+    "94": {
+      "name": "Frits Clausen",
+      "country_id": 21,
+      "ideology": 0
+    },
+    "95": {
+      "name": "Aksel Larsen",
+      "country_id": 21,
+      "ideology": 2
+    },
+    "96": {
+      "name": "Christian X",
+      "country_id": 21,
+      "ideology": 3
+    },
+    "97": {
+      "name": "Gustaf V",
+      "country_id": 22,
+      "ideology": 3
+    },
+    "98": {
+      "name": "Sven Linderot",
+      "country_id": 22,
+      "ideology": 2
+    },
+    "99": {
+      "name": "Sven Olov Lindholm",
+      "country_id": 22,
+      "ideology": 0
+    },
+    "100": {
+      "name": "Per Albin Hansson",
+      "country_id": 22,
+      "ideology": 1
+    },
+    "101": {
+      "name": "Johan Nygaardsvold",
+      "country_id": 23,
+      "ideology": 1
+    },
+    "102": {
+      "name": "Vidkun Quisling",
+      "country_id": 23,
+      "ideology": 0
+    },
+    "103": {
+      "name": "Emil L\u00f8vlien",
+      "country_id": 23,
+      "ideology": 2
+    },
+    "104": {
+      "name": "Haakon VII",
+      "country_id": 23,
+      "ideology": 3
+    },
+    "105": {
+      "name": "Yrj\u00f6 Sirola",
+      "country_id": 24,
+      "ideology": 2
+    },
+    "106": {
+      "name": "Vilho Annala",
+      "country_id": 24,
+      "ideology": 0
+    },
+    "107": {
+      "name": "Carl Gustaf Emil Mannerheim",
+      "country_id": 24,
+      "ideology": 3
+    },
+    "108": {
+      "name": "Pehr Evind Svinhufvud",
+      "country_id": 24,
+      "ideology": 1
+    },
+    "109": {
+      "name": "Konstantin Rodzaevsky",
+      "country_id": 25,
+      "ideology": 0
+    },
+    "110": {
+      "name": "Alexander Kerensky",
+      "country_id": 25,
+      "ideology": 1
+    },
+    "111": {
+      "name": "Pavel Milyukov",
+      "country_id": 25,
+      "ideology": 1
+    },
+    "112": {
+      "name": "Leon Trotsky",
+      "country_id": 25,
+      "ideology": 2
+    },
+    "113": {
+      "name": "Kirill I ",
+      "country_id": 25,
+      "ideology": 3
+    },
+    "114": {
+      "name": "Oswald Mosley",
+      "country_id": 26,
+      "ideology": 0
+    },
+    "115": {
+      "name": "Harry Pollitt",
+      "country_id": 26,
+      "ideology": 2
+    },
+    "116": {
+      "name": "George V",
+      "country_id": 26,
+      "ideology": 3
+    },
+    "117": {
+      "name": "Edward VIII",
+      "country_id": 26,
+      "ideology": 3
+    },
+    "118": {
+      "name": "George VI",
+      "country_id": 26,
+      "ideology": 3
+    },
+    "119": {
+      "name": "Se\u00e1n Murray",
+      "country_id": 27,
+      "ideology": 2
+    },
+    "120": {
+      "name": "Eoin O'Duffy",
+      "country_id": 27,
+      "ideology": 0
+    },
+    "121": {
+      "name": "\u00c9amon de Valera",
+      "country_id": 27,
+      "ideology": 1
+    },
+    "122": {
+      "name": "Patrick Belton",
+      "country_id": 27,
+      "ideology": 3
+    },
+    "123": {
+      "name": "Mustafa Kemal Atat\u00fcrk",
+      "country_id": 28,
+      "ideology": 3
+    },
+    "124": {
+      "name": "Recep Peker",
+      "country_id": 28,
+      "ideology": 0
+    },
+    "125": {
+      "name": "Ali Fethi Okyar",
+      "country_id": 28,
+      "ideology": 1
+    },
+    "126": {
+      "name": "Mustafa Kemal Atat\u00fcrk",
+      "country_id": 28,
+      "ideology": 1
+    },
+    "127": {
+      "name": "\u015eefik H\u00fcsn\u00fc Deymer",
+      "country_id": 28,
+      "ideology": 2
+    },
+    "128": {
+      "name": "King Ghazi I",
+      "country_id": 29,
+      "ideology": 3
+    },
+    "129": {
+      "name": "Yasin al-Hashimi",
+      "country_id": 29,
+      "ideology": 3
+    },
+    "130": {
+      "name": "Yusuf Salman Yusuf",
+      "country_id": 29,
+      "ideology": 2
+    },
+    "131": {
+      "name": "Rashid Ali al-Gaylani",
+      "country_id": 29,
+      "ideology": 0
+    },
+    "132": {
+      "name": "Kamil Chadirji",
+      "country_id": 29,
+      "ideology": 1
+    },
+    "133": {
+      "name": "Abdulaziz Ibn Saud",
+      "country_id": 30,
+      "ideology": 3
+    },
+    "134": {
+      "name": "Sayyid Muhammad Tahir al-Dabbagh",
+      "country_id": 30,
+      "ideology": 1
+    },
+    "135": {
+      "name": "Fuad Hamza",
+      "country_id": 30,
+      "ideology": 0
+    },
+    "136": {
+      "name": "Reza Shah Pahlavi",
+      "country_id": 31,
+      "ideology": 3
+    },
+    "137": {
+      "name": "Mohammad Mossadegh",
+      "country_id": 31,
+      "ideology": 1
+    },
+    "138": {
+      "name": "Abdul-Rahman Saif Azad",
+      "country_id": 31,
+      "ideology": 0
+    },
+    "139": {
+      "name": "Taqi Arani",
+      "country_id": 31,
+      "ideology": 2
+    }
+  },
+  "next_leader_id": 140
+}

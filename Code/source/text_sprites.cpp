@@ -3,34 +3,20 @@
 #include <string.h>
 #include <nds.h>
 
-// ---------------------------------------------------------
-// Hybrid text renderer.
-//
-// MAIN engine (bottom/touch screen): sprites, as before. Menu button
-// labels + country name are short — nowhere near the 128-slot ceiling,
-// so there's no reason to move this off sprites. Bank A is fully
-// consumed by the BG3 map bitmap, and mapBase's hardware range (0-31,
-// max 62KB offset) can only ever reach into Bank A anyway — so a BG
-// tile layer genuinely isn't usable on this engine without tearing up
-// the map bitmap. Sprites sidestep that entirely.
-//
-// SUB engine (top screen / province info): BG tile layer. Bank C is
-// completely unused by anything else, so there's no VRAM conflict
-// here. This is also where the actual budget problem was (info panel
-// text was competing with flag/portrait sprites for the same 128
-// OAM slots) — moving just this engine's text off sprites fixes that
-// while leaving the bottom screen alone.
-// ---------------------------------------------------------
-
 #define MAX_TEXT_SPR 128
 
-#define SUB_MAP_BASE  0   // tilemap: offset 0KB,  2KB used  (mapBase max reach is 62KB — fine)
-#define SUB_TILE_BASE 1   // tile gfx: offset 16KB, ~1.5KB used — well clear of the map above
+#define SUB_MAP_BASE  0   
+#define SUB_TILE_BASE 1   
 
 #define MAP_COLS 32
 #define MAP_ROWS 32
 #define VIS_ROWS 24
-#define BG_CHAR_W 8       // sub-engine tiles are grid-locked to 8px, unlike sprite CHAR_W
+#define BG_CHAR_W 8   
+#define BAR_TILE_BASE     FONT_GLYPH_COUNT  // 4 solid-color tiles placed right after the font glyphs
+#define BAR_PAL_FASCISM   2
+#define BAR_PAL_DEMOCRACY 3
+#define BAR_PAL_COMMUNISM 4
+#define BAR_PAL_AUTOCRACY 5
 
 struct TextCtx {
     // --- main engine (sprites) ---
@@ -49,12 +35,43 @@ static TextCtx ctxSub;
 
 static TextCtx& ctxFor(TextEngine e) { return e == TEXT_ENGINE_MAIN ? ctxMain : ctxSub; }
 
-static int findGlyphIndex(char c)
+// Decodes a single UTF-8 codepoint from a byte stream and advances the pointer
+static char16_t decodeUtf8(const char** str)
 {
-    if (c >= 'a' && c <= 'z') c -= 32;
+    const u8* p = (const u8*)*str;
+    if (!*p) return 0;
+
+    char16_t code = 0;
+    if ((*p & 0x80) == 0) {
+        code = *p++;
+    } else if ((*p & 0xE0) == 0xC0) {
+        code = (*p++ & 0x1F) << 6;
+        if (*p) code |= (*p++ & 0x3F);
+    } else if ((*p & 0xF0) == 0xE0) {
+        code = (*p++ & 0x0F) << 12;
+        if (*p) code |= (*p++ & 0x3F) << 6;
+        if (*p) code |= (*p++ & 0x3F);
+    } else {
+        p++; // Fallback for unsupported sequences
+    }
+
+    *str = (const char*)p;
+    return code;
+}
+
+// Updated to accept char16_t; removed automatic lowercase transformation ('c -= 32')
+static int findGlyphIndex(char16_t c)
+{
     for (unsigned int i = 0; i < FONT_GLYPH_COUNT; i++)
         if (FONT_GLYPHS[i].c == c) return i;
-    return 0;
+    return 0; // Default to space/first glyph if not found
+}
+
+static void buildSolidTile(u8 paletteIndex, u8* out)
+{
+    u8 packed = paletteIndex | (paletteIndex << 4); // same index in both nibbles — whole tile one flat color
+    for (int i = 0; i < 32; i++)
+        out[i] = packed;
 }
 
 static void buildGlyphTile(const Glyph& g, u8* out)
@@ -73,7 +90,6 @@ static void buildGlyphTile(const Glyph& g, u8* out)
 
 void initTextSprites(TextEngine engine)
 {
-    // static: DMA can't read a plain stack array — DTCM is invisible to it.
     static u8 tileBuf[32];
 
     if (engine == TEXT_ENGINE_MAIN)
@@ -102,9 +118,11 @@ void initTextSprites(TextEngine engine)
         TextCtx& ctx = ctxSub;
 
         ctx.bgId = bgInitSub(0, BgType_Text4bpp, BgSize_T_256x256, SUB_MAP_BASE, SUB_TILE_BASE);
+bgSetScroll(ctx.bgId, 0, 0);
+bgUpdate();
 
         ctx.mapPtr        = (u16*)bgGetMapPtr(ctx.bgId);
-        u16* gfxPtr        = (u16*)bgGetGfxPtr(ctx.bgId);
+        u16* gfxPtr       = (u16*)bgGetGfxPtr(ctx.bgId);
 
         BG_PALETTE_SUB[0] = RGB15(0, 0, 0);
         BG_PALETTE_SUB[1] = RGB15(31, 31, 31);
@@ -113,12 +131,29 @@ void initTextSprites(TextEngine engine)
         {
             buildGlyphTile(FONT_GLYPHS[g], tileBuf);
 
-            u16* dst = gfxPtr + g * 16; // 16 halfwords = 32 bytes per 4bpp 8x8 tile
+            u16* dst = gfxPtr + g * 16;
             dmaCopyHalfWords(3, tileBuf, dst, 32);
             while (dmaBusy(3)) ;
 
             ctx.tileIdx[g] = g;
         }
+		
+		// 4 solid-color tiles for the ideology bar — same tile/palette pipeline
+        // as the font glyphs, just past the end of the glyph range. BG_PALETTE_SUB
+        // is separate from SPRITE_PALETTE_SUB (which flags use), so no conflict.
+        BG_PALETTE_SUB[BAR_PAL_FASCISM]   = RGB15(14, 9, 3);   // brown
+        BG_PALETTE_SUB[BAR_PAL_DEMOCRACY] = RGB15(6, 10, 28);  // blue
+        BG_PALETTE_SUB[BAR_PAL_COMMUNISM] = RGB15(28, 6, 6);   // red
+        BG_PALETTE_SUB[BAR_PAL_AUTOCRACY] = RGB15(16, 16, 16); // grey
+
+		const u8 barPalettes[4] = { BAR_PAL_FASCISM, BAR_PAL_DEMOCRACY, BAR_PAL_COMMUNISM, BAR_PAL_AUTOCRACY };
+		for (int i = 0; i < 4; i++)
+		{
+			buildSolidTile(barPalettes[i], tileBuf);   // reuse the existing static tileBuf, not barTileBuf
+			u16* dst = gfxPtr + (BAR_TILE_BASE + i) * 16;
+			dmaCopyHalfWords(3, tileBuf, dst, 32);
+			while (dmaBusy(3)) ;
+		}
 
         for (int i = 0; i < MAP_COLS * MAP_ROWS; i++)
             ctx.mapPtr[i] = 0;
@@ -145,16 +180,18 @@ void clearText(TextEngine engine)
 void drawText(TextEngine engine, int x, int y, const char* str)
 {
     TextCtx& ctx = ctxFor(engine);
-    int len = strlen(str);
 
     if (engine == TEXT_ENGINE_MAIN)
     {
-        for (int i = 0; i < len && ctx.cursor < MAX_TEXT_SPR; i++)
+        const char* ptr = str;
+        while (*ptr && ctx.cursor < MAX_TEXT_SPR)
         {
-            int glyphIdx = findGlyphIndex(str[i]);
+            char16_t code = decodeUtf8(&ptr);
+            int glyphIdx = findGlyphIndex(code);
+
             oamSet(ctx.oam, ctx.cursor, x, y, 0, 0, SpriteSize_8x8, SpriteColorFormat_16Color,
                    ctx.glyphGfx[glyphIdx], -1, false, false, false, false, false);
-            x += CHAR_W;
+            x += FONT_GLYPHS[glyphIdx].width;
             ctx.cursor++;
         }
     }
@@ -164,10 +201,15 @@ void drawText(TextEngine engine, int x, int y, const char* str)
         int row = y / BG_CHAR_W;
         if (row < 0 || row >= VIS_ROWS) return;
 
-        for (int i = 0; i < len && col + i < MAP_COLS; i++)
+        const char* ptr = str;
+        int offset = 0;
+        while (*ptr && (col + offset) < MAP_COLS)
         {
-            int glyphIdx = findGlyphIndex(str[i]);
-            ctx.mapPtr[row * MAP_COLS + (col + i)] = ctx.tileIdx[glyphIdx];
+            char16_t code = decodeUtf8(&ptr);
+            int glyphIdx = findGlyphIndex(code);
+
+            ctx.mapPtr[row * MAP_COLS + (col + offset)] = ctx.tileIdx[glyphIdx];
+            offset++;
         }
     }
 }
@@ -176,35 +218,64 @@ void commitText(TextEngine engine)
 {
     if (engine == TEXT_ENGINE_MAIN)
         oamUpdate(ctxMain.oam);
-    // SUB: no-op, drawText() already wrote straight to VRAM.
 }
 
-void debugDrawGlyph1()
+int textPixelWidth(const char* s)
 {
-    // Zoom-renders the 'A' tile from the SUB engine's BG tile storage
-    // onto the MAIN engine's bitmap, same debug view as before.
-    u16* vram      = (u16*)BG_BMP_RAM(0);
-    u16* gfxPtr    = (u16*)bgGetGfxPtr(ctxSub.bgId);
-    u8*  tileBytes = (u8*)(gfxPtr + 1 * 16);
+    int len = strlen(s);
+    if (len == 0) return 0;
+    return (len - 1) * CHAR_W + 8;
+}
 
-    int scale = 10;
-    for (int row = 0; row < 8; row++)
+void drawIdeologyBar(int x, int y, int widthTiles, const unsigned char support[4])
+{
+    int col = x / BG_CHAR_W;
+    int row = y / BG_CHAR_W;
+    if (row < 0 || row >= VIS_ROWS) return;
+    if (widthTiles <= 0) return;
+    if (widthTiles > MAP_COLS) widthTiles = MAP_COLS;
+
+    int total = support[0] + support[1] + support[2] + support[3];
+    if (total <= 0) total = 1; // guard against bad/empty data
+
+    // Largest-remainder rounding — 4 independently-rounded percentages could
+    // overshoot or undershoot widthTiles; this guarantees they sum to it exactly.
+    int tiles[4], remainder[4], assigned = 0;
+    for (int i = 0; i < 4; i++)
     {
-        for (int col = 0; col < 8; col += 2)
-        {
-            u8 byteVal = tileBytes[row * 4 + col / 2];
-            u8 px0 = byteVal & 0x0F;
-            u8 px1 = (byteVal >> 4) & 0x0F;
-
-            u16 color0 = px0 ? RGB15(31,31,31) : RGB15(0,0,0);
-            u16 color1 = px1 ? RGB15(31,31,31) : RGB15(0,0,0);
-
-            for (int dy = 0; dy < scale; dy++)
-                for (int dx = 0; dx < scale; dx++)
-                {
-                    vram[(row*scale+dy)*256 + (col*scale+dx)]     = color0;
-                    vram[(row*scale+dy)*256 + ((col+1)*scale+dx)] = color1;
-                }
-        }
+        int scaled   = support[i] * widthTiles;
+        tiles[i]     = scaled / total;
+        remainder[i] = scaled % total;
+        assigned    += tiles[i];
     }
+    while (assigned < widthTiles)
+    {
+        int best = 0;
+        for (int i = 1; i < 4; i++)
+            if (remainder[i] > remainder[best]) best = i;
+        tiles[best]++;
+        remainder[best] = -1;
+        assigned++;
+    }
+
+    int c = col;
+    for (int i = 0; i < 4; i++)
+        for (int t = 0; t < tiles[i] && c < MAP_COLS; t++, c++)
+            ctxSub.mapPtr[row * MAP_COLS + c] = BAR_TILE_BASE + i;
+}
+
+void debugPokeTile(int row, int col, int tileIndex)
+{
+    ctxSub.mapPtr[row * MAP_COLS + col] = tileIndex;
+}
+
+int debugReadTile(int row, int col)
+{
+    return ctxSub.mapPtr[row * MAP_COLS + col];
+}
+
+int debugReadTileByte(int tileIndex, int byteOffset)
+{
+    u8* gfxPtr = (u8*)bgGetGfxPtr(ctxSub.bgId);
+    return gfxPtr[tileIndex * 32 + byteOffset];
 }

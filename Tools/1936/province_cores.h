@@ -6,8 +6,8 @@ typedef struct {
     unsigned char  country_id;
 } ProvinceCore;
 
-#define PROVINCE_CORE_COUNT 414
+#define PROVINCE_CORE_COUNT 429
 
-extern const ProvinceCore province_cores[PROVINCE_CORE_COUNT];
+extern ProvinceCore province_cores[PROVINCE_CORE_COUNT];
 
 #endif

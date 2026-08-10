@@ -1,5 +1,6 @@
 #include "turn_system.h"
 #define DEBUG_PAUSE(frames) for (int _i = 0; _i < (frames); _i++) swiWaitForVBlank()
+#include "decisions.h"
 
 unsigned char PLAYER_COUNTRY = 0;  // default until country select sets it
 
@@ -11,11 +12,12 @@ void init_turn_system(){
   CURRENT_TURN.current_country = 0;
   CURRENT_TURN.current_turn = 0;
   CURRENT_TURN.awaiting_orders = (CURRENT_TURN.current_country == PLAYER_COUNTRY);
+  initDecisionsSystem();
 }
 
 void ai_actions() {
     // blank for now
-	DEBUG_PAUSE(30);
+	DEBUG_PAUSE(10);
 }
 
 void pass_turn(int pressed) {

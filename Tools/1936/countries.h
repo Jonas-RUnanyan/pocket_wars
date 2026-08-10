@@ -7,7 +7,7 @@ typedef struct {
     unsigned short capital;
 } Country;
 
-#define COUNTRY_COUNT 32
+#define COUNTRY_COUNT 33
 #define NO_CAPITAL    0xFFFF
 
 extern const Country countries[COUNTRY_COUNT];

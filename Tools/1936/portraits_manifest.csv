@@ -1,0 +1,139 @@
+PortraitID,CountryID,CountryName,Ideology,LeaderName,CurrentlyActive
+1,1,Spain,Democracy,Niceto Alcalá-Zamora,yes
+2,1,Spain,Fascism,Emilio Mola,yes
+3,1,Spain,Fascism,Francisco Franco,no
+4,1,Spain,Communism,José Díaz,yes
+5,1,Spain,Autocracy,Juan de Borbón,yes
+6,2,France,Democracy,Albert Lebrun,yes
+7,6,Germany,Fascism,Adolf Hitler,yes
+8,6,Germany,Democracy,Konrad Adenauer,no
+9,8,Italy,Fascism,Benito Mussolini,yes
+11,10,Hungary,Autocracy,Miklos Horthy,yes
+12,25,Soviet Union,Communism,Iosef Stalin,yes
+13,26,United Kingdom,Democracy,Stanley Baldwin,yes
+14,0,Portugal,Autocracy,António de Oliveria Salazar,yes
+15,2,France,Communism,Maurice Thorez,yes
+16,2,France,Autocracy,Napoleon VI,yes
+17,2,France,Fascism,Jacques Doriot,yes
+18,0,Portugal,Communism,Bento Gonçalves,yes
+19,0,Portugal,Communism,Álvaro Cunhal,no
+20,0,Portugal,Democracy,António Sérgio,yes
+21,0,Portugal,Fascism,Francisco Rolão Preto,yes
+22,3,Luxembourg,Democracy,Joseph Bech,yes
+23,3,Luxembourg,Democracy,Pierre Dupong,no
+24,3,Luxembourg,Fascism,Damian Kratzenberg,yes
+25,3,Luxembourg,Communism,Dominique Urbany,yes
+26,3,Luxembourg,Autocracy,Charlotte,yes
+27,4,Belgium,Democracy,Paul van Zeeland,yes
+28,4,Belgium,Fascism,Léon Degrelle,yes
+29,4,Belgium,Communism,Joseph Jacquemotte,yes
+30,4,Belgium,Autocracy,Leopold III,yes
+31,4,Belgium,Democracy,Hubert Pierlot,no
+32,5,Netherlands,Autocracy,Wilhemina,yes
+33,5,Netherlands,Democracy,Hendrikus Colijn,yes
+34,5,Netherlands,Fascism,Anton Mussert,yes
+35,5,Netherlands,Communism,Louis de Visser,yes
+36,6,Germany,Democracy,Toni Sender,yes
+37,6,Germany,Communism,Ernst Thälmann,yes
+38,6,Germany,Autocracy,Wilhelm II,yes
+39,7,Switzerland,Democracy,Swiss Federal Council,yes
+40,7,Switzerland,Fascism,Wilhelm Gustloff,yes
+41,7,Switzerland,Communism,Léon Nicole,yes
+42,8,Italy,Communism,Palmiro Togliatti,yes
+43,8,Italy,Democracy,Carlo Rosselli,yes
+44,8,Italy,Autocracy,Vittorio Emanuele III,yes
+45,9,Austria,Fascism,Kurt Schuschnigg,yes
+46,9,Austria,Communism,Johann Koplenig,yes
+47,9,Austria,Autocracy,Otto von Habsburg,yes
+48,9,Austria,Democracy,Otto Bauer,yes
+49,10,Hungary,Democracy,Károly Peyer,yes
+50,10,Hungary,Fascism,Fidél Pálffy,yes
+51,10,Hungary,Communism,Béla Kun,yes
+52,11,Czechoslovakia,Communism,Klement Gottwald,yes
+53,11,Czechoslovakia,Fascism,Radola Gajda,yes
+54,11,Czechoslovakia,Democracy,Edvard Beneš,yes
+55,12,Yugoslavia,Fascism,Dimitrije Ljotić,yes
+56,12,Yugoslavia,Autocracy,Milan Stojadinović,yes
+57,12,Yugoslavia,Autocracy,Peter II,no
+58,12,Yugoslavia,Democracy,Ljuba Davidović,yes
+59,12,Yugoslavia,Communism,Josip Broz Tito,yes
+60,13,Albania,Autocracy,Zog I,yes
+61,13,Albania,Democracy,Mehdi Frashëri,yes
+62,13,Albania,Communism,Ali Kelmendi,yes
+63,13,Albania,Fascism,Tefik Mborja,yes
+64,14,Greece,Democracy,Konstantinos Demertzis,yes
+65,14,Greece,Autocracy,Ioannis Metaxás,yes
+66,14,Greece,Fascism,Ioannis Metaxás,yes
+67,14,Greece,Autocracy,George II,no
+68,14,Greece,Communism,Nikos Zachariadis,yes
+69,15,Bulgaria,Communism,Georgi Dimitrov,yes
+70,15,Bulgaria,Autocracy,Boris III,yes
+71,15,Bulgaria,Fascism,Alexander Tsankov,yes
+72,15,Bulgaria,Democracy,Atanas Burov,yes
+73,16,Romania,Autocracy,Carol II,yes
+74,16,Romania,Communism,Boris Stefanov,yes
+75,16,Romania,Democracy,Iuliu Maniu,yes
+76,16,Romania,Fascism,Corneliu Zelea Codreanu,yes
+77,17,Poland,Autocracy,Ignacy Mościcki,yes
+78,17,Poland,Democracy,Władysław Sikorski,yes
+79,17,Poland,Communism,Bolesław Bierut,yes
+80,17,Poland,Fascism,Bolesław Piasecki,yes
+81,18,Lithuania,Autocracy,Antanas Smetona,yes
+82,18,Lithuania,Fascism,Augustinas Voldemaras,yes
+83,18,Lithuania,Communism,Antanas Sniečkus,yes
+84,18,Lithuania,Democracy,Kazys Grinius,yes
+85,19,Latvia,Autocracy,Kārlis Ulmanis,yes
+86,19,Latvia,Democracy,Brūno Kalniņš,yes
+87,19,Latvia,Communism,Jānis Rudzutaks,yes
+88,19,Latvia,Fascism,Gustavs Celmiņš,yes
+89,20,Estonia,Autocracy,Konstantin Päts,yes
+90,20,Estonia,Fascism,Andres Larka,yes
+91,20,Estonia,Communism,Nigol Andresen,yes
+92,20,Estonia,Democracy,Jaan Tõnisson,yes
+93,21,Denmark,Democracy,Thorvald Stauning,yes
+94,21,Denmark,Fascism,Frits Clausen,yes
+95,21,Denmark,Communism,Aksel Larsen,yes
+96,21,Denmark,Autocracy,Christian X,yes
+97,22,Sweden,Autocracy,Gustaf V,yes
+98,22,Sweden,Communism,Sven Linderot,yes
+99,22,Sweden,Fascism,Sven Olov Lindholm,yes
+100,22,Sweden,Democracy,Per Albin Hansson,yes
+101,23,Norway,Democracy,Johan Nygaardsvold,yes
+102,23,Norway,Fascism,Vidkun Quisling,yes
+103,23,Norway,Communism,Emil Løvlien,yes
+104,23,Norway,Autocracy,Haakon VII,yes
+105,24,Finland,Communism,Yrjö Sirola,yes
+106,24,Finland,Fascism,Vilho Annala,yes
+107,24,Finland,Autocracy,Carl Gustaf Emil Mannerheim,yes
+108,24,Finland,Democracy,Pehr Evind Svinhufvud,yes
+109,25,Soviet Union,Fascism,Konstantin Rodzaevsky,yes
+110,25,Soviet Union,Democracy,Alexander Kerensky,yes
+111,25,Soviet Union,Democracy,Pavel Milyukov,no
+112,25,Soviet Union,Communism,Leon Trotsky,no
+113,25,Soviet Union,Autocracy,Kirill I ,yes
+114,26,United Kingdom,Fascism,Oswald Mosley,yes
+115,26,United Kingdom,Communism,Harry Pollitt,yes
+116,26,United Kingdom,Autocracy,George V,yes
+117,26,United Kingdom,Autocracy,Edward VIII,no
+118,26,United Kingdom,Autocracy,George VI,no
+119,27,Ireland,Communism,Seán Murray,yes
+120,27,Ireland,Fascism,Eoin O'Duffy,yes
+121,27,Ireland,Democracy,Éamon de Valera,yes
+122,27,Ireland,Autocracy,Patrick Belton,yes
+123,28,Turkey,Autocracy,Mustafa Kemal Atatürk,yes
+124,28,Turkey,Fascism,Recep Peker,yes
+125,28,Turkey,Democracy,Ali Fethi Okyar,no
+126,28,Turkey,Democracy,Mustafa Kemal Atatürk,yes
+127,28,Turkey,Communism,Şefik Hüsnü Deymer,yes
+128,29,Iraq,Autocracy,King Ghazi I,no
+129,29,Iraq,Autocracy,Yasin al-Hashimi,yes
+130,29,Iraq,Communism,Yusuf Salman Yusuf,yes
+131,29,Iraq,Fascism,Rashid Ali al-Gaylani,yes
+132,29,Iraq,Democracy,Kamil Chadirji,yes
+133,30,Saudi Arabia,Autocracy,Abdulaziz Ibn Saud,yes
+134,30,Saudi Arabia,Democracy,Sayyid Muhammad Tahir al-Dabbagh,yes
+135,30,Saudi Arabia,Fascism,Fuad Hamza,yes
+136,31,Persia,Autocracy,Reza Shah Pahlavi,yes
+137,31,Persia,Democracy,Mohammad Mossadegh,yes
+138,31,Persia,Fascism,Abdul-Rahman Saif Azad,yes
+139,31,Persia,Communism,Taqi Arani,yes

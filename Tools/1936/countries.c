@@ -32,5 +32,6 @@ const Country countries[COUNTRY_COUNT] = {
     {"Turkey", 0xD7F9, 0x0114},
     {"Iraq", 0x81F7, 0x00C5},
     {"Saudi Arabia", 0x80E0, 0x00C6},
-    {"Persia", 0x97AF, 0x00BF}
+    {"Persia", 0x97AF, 0x00BF},
+    {"Austria-Hungary", 0xF7BD, 0xFFFF}
 };
