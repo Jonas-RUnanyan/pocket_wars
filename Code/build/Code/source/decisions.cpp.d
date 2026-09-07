@@ -64,8 +64,9 @@ build/Code/source/decisions.cpp.o: source/decisions.cpp \
  C:/msys64/opt/wonderful/thirdparty/blocksds/core/libs/libnds/include/nds/arm9/teak/fifo.h \
  C:/msys64/opt/wonderful/thirdparty/blocksds/core/libs/libnds/include/nds/arm9/teak/tlf.h \
  include/decisions_data.h include/political_data.h include/countries.h \
- include/menu.h include/text_sprites.h include/text_sprites.h \
- include/turn_system.h include/province_owners.h include/flags.h
+ include/province_cores.h include/menu.h include/text_sprites.h \
+ include/text_sprites.h include/turn_system.h include/province_owners.h \
+ include/flags.h include/province_cores.h include/formable_cores.h
 include/decisions.h:
 C:/msys64/opt/wonderful/thirdparty/blocksds/core/libs/libnds/include/nds.h:
 C:/msys64/opt/wonderful/thirdparty/blocksds/core/libs/libnds/include/nds/bios.h:
@@ -133,9 +134,12 @@ C:/msys64/opt/wonderful/thirdparty/blocksds/core/libs/libnds/include/nds/arm9/te
 include/decisions_data.h:
 include/political_data.h:
 include/countries.h:
+include/province_cores.h:
 include/menu.h:
 include/text_sprites.h:
 include/text_sprites.h:
 include/turn_system.h:
 include/province_owners.h:
 include/flags.h:
+include/province_cores.h:
+include/formable_cores.h:

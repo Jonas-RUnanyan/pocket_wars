@@ -62,12 +62,12 @@ build/Code/source/main.cpp.o: source/main.cpp \
  C:/msys64/opt/wonderful/thirdparty/blocksds/core/libs/libnds/include/nds/arm9/teak/dsp.h \
  C:/msys64/opt/wonderful/thirdparty/blocksds/core/libs/libnds/include/nds/arm9/teak/fifo.h \
  C:/msys64/opt/wonderful/thirdparty/blocksds/core/libs/libnds/include/nds/arm9/teak/tlf.h \
- build/Code/gfx/splash.h include/province_data.h include/province_map.h \
- include/countries.h include/province_owners.h include/province_cores.h \
- include/turn_system.h include/countries.h include/menu.h \
- include/text_sprites.h include/text_sprites.h include/sprites.h \
- include/flags.h include/political_data.h include/decisions.h \
- include/decisions_data.h include/political_data.h
+ include/province_data.h include/province_cores.h include/turn_system.h \
+ include/countries.h include/menu.h include/text_sprites.h \
+ include/text_sprites.h include/sprites.h include/flags.h \
+ include/country_display.h include/politics.h include/political_data.h \
+ include/decisions.h include/decisions_data.h include/province_cores.h \
+ include/display.h include/province_owners.h include/province_map.h
 C:/msys64/opt/wonderful/thirdparty/blocksds/core/libs/libnds/include/nds.h:
 C:/msys64/opt/wonderful/thirdparty/blocksds/core/libs/libnds/include/nds/bios.h:
 C:/msys64/opt/wonderful/thirdparty/blocksds/core/libs/libnds/include/nds/ndstypes.h:
@@ -131,11 +131,7 @@ C:/msys64/opt/wonderful/thirdparty/blocksds/core/libs/libnds/include/nds/arm9/pe
 C:/msys64/opt/wonderful/thirdparty/blocksds/core/libs/libnds/include/nds/arm9/teak/dsp.h:
 C:/msys64/opt/wonderful/thirdparty/blocksds/core/libs/libnds/include/nds/arm9/teak/fifo.h:
 C:/msys64/opt/wonderful/thirdparty/blocksds/core/libs/libnds/include/nds/arm9/teak/tlf.h:
-build/Code/gfx/splash.h:
 include/province_data.h:
-include/province_map.h:
-include/countries.h:
-include/province_owners.h:
 include/province_cores.h:
 include/turn_system.h:
 include/countries.h:
@@ -144,7 +140,12 @@ include/text_sprites.h:
 include/text_sprites.h:
 include/sprites.h:
 include/flags.h:
+include/country_display.h:
+include/politics.h:
 include/political_data.h:
 include/decisions.h:
 include/decisions_data.h:
-include/political_data.h:
+include/province_cores.h:
+include/display.h:
+include/province_owners.h:
+include/province_map.h:

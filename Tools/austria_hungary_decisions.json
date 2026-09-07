@@ -59,38 +59,10 @@
       "availability": null,
       "effects": [
         {
-          "effect": "SET_PROVINCE_OWNER",
+          "effect": "ABSORB_COUNTRY",
           "params": {
-            "province_id": 69,
-            "country_id": -1
-          }
-        },
-        {
-          "effect": "SET_PROVINCE_OWNER",
-          "params": {
-            "province_id": 253,
-            "country_id": -1
-          }
-        },
-        {
-          "effect": "SET_PROVINCE_OWNER",
-          "params": {
-            "province_id": 452,
-            "country_id": -1
-          }
-        },
-        {
-          "effect": "SET_PROVINCE_OWNER",
-          "params": {
-            "province_id": 451,
-            "country_id": -1
-          }
-        },
-        {
-          "effect": "SET_PROVINCE_OWNER",
-          "params": {
-            "province_id": 68,
-            "country_id": -1
+            "absorbed_country": 10,
+            "into_country": -1
           }
         }
       ]
@@ -101,7 +73,7 @@
       "effect_text": "",
       "prerequisites_text": "",
       "once_only": false,
-      "cooldown_turns": 2,
+      "cooldown_turns": 1,
       "visibility": null,
       "availability": null,
       "effects": [
@@ -117,7 +89,7 @@
       "title": "Annex Czechoslovakia",
       "flavor_text": "Edvard Benes tonto panoli",
       "effect_text": "",
-      "prerequisites_text": "",
+      "prerequisites_text": "We have reunited with Hungary and reestabilized the country.",
       "once_only": true,
       "cooldown_turns": 0,
       "visibility": {
@@ -145,73 +117,10 @@
       },
       "effects": [
         {
-          "effect": "SET_PROVINCE_OWNER",
+          "effect": "ABSORB_COUNTRY",
           "params": {
-            "province_id": 323,
-            "country_id": -1
-          }
-        },
-        {
-          "effect": "SET_PROVINCE_OWNER",
-          "params": {
-            "province_id": 450,
-            "country_id": -1
-          }
-        },
-        {
-          "effect": "SET_PROVINCE_OWNER",
-          "params": {
-            "province_id": 413,
-            "country_id": -1
-          }
-        },
-        {
-          "effect": "SET_PROVINCE_OWNER",
-          "params": {
-            "province_id": 336,
-            "country_id": -1
-          }
-        },
-        {
-          "effect": "SET_PROVINCE_OWNER",
-          "params": {
-            "province_id": 337,
-            "country_id": -1
-          }
-        },
-        {
-          "effect": "SET_PROVINCE_OWNER",
-          "params": {
-            "province_id": 330,
-            "country_id": -1
-          }
-        },
-        {
-          "effect": "SET_PROVINCE_OWNER",
-          "params": {
-            "province_id": 328,
-            "country_id": -1
-          }
-        },
-        {
-          "effect": "SET_PROVINCE_OWNER",
-          "params": {
-            "province_id": 312,
-            "country_id": -1
-          }
-        },
-        {
-          "effect": "SET_PROVINCE_OWNER",
-          "params": {
-            "province_id": 329,
-            "country_id": -1
-          }
-        },
-        {
-          "effect": "SET_PROVINCE_OWNER",
-          "params": {
-            "province_id": 332,
-            "country_id": -1
+            "absorbed_country": 11,
+            "into_country": -1
           }
         }
       ]
@@ -288,6 +197,13 @@
             "province_id": 339,
             "country_id": 6
           }
+        },
+        {
+          "effect": "ABSORB_COUNTRY",
+          "params": {
+            "absorbed_country": 17,
+            "into_country": 25
+          }
         }
       ]
     },
@@ -334,6 +250,12 @@
           "params": {
             "ideology": 3,
             "delta": 100
+          }
+        },
+        {
+          "effect": "FORM_NATION",
+          "params": {
+            "formed_country": 32
           }
         }
       ]

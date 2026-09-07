@@ -38,6 +38,8 @@ typedef enum {
     EFFECTOP_SET_LEADER = 4,
     EFFECTOP_CLEAR_LEADER = 5,
     EFFECTOP_FORM_NATION = 6,
+    EFFECTOP_ABSORB_COUNTRY = 7,
+    EFFECTOP_ADD_CORE = 8,
 } EffectOp;
 
 #define EFFECT_COUNTRY_SELF -1 // sentinel: acting country
@@ -50,7 +52,12 @@ typedef enum {
 //     must linear-search leaders[] for a matching portrait_id at apply-time to find
 //     that leader's country_id/ideology/current array index
 //   CLEAR_LEADER: op1=country_id or EFFECT_COUNTRY_SELF, op2=ideology
-//   FORM_NATION: op1=target_country_id — STUB, mechanics not yet designed
+//   FORM_NATION: op1=formed_country_id — acting country transforms into it:
+//     transfers acting country's provinces, copies its political state over,
+//     deactivates old identity (unless same id), PLAYER_COUNTRY follows if applicable
+//   ABSORB_COUNTRY: op1=absorbed_country_id, op2=into country_id or EFFECT_COUNTRY_SELF
+//   ADD_CORE: op1=province_id, op2=country_id or EFFECT_COUNTRY_SELF — appends to a
+//     bounded runtime core list (MAX_RUNTIME_CORES in decisions.cpp), NOT province_cores.c
 typedef struct { unsigned char opcode; short operand1; short operand2; } EffectInstr;
 
 typedef struct {
@@ -72,7 +79,7 @@ typedef struct {
 #define CONDITION_POOL_COUNT 28
 extern const ConditionInstr condition_pool[CONDITION_POOL_COUNT];
 
-#define EFFECT_POOL_COUNT 27
+#define EFFECT_POOL_COUNT 15
 extern const EffectInstr effect_pool[EFFECT_POOL_COUNT];
 
 #define DECISION_COUNT 6

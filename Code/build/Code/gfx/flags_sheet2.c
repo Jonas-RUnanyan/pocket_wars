@@ -8,7 +8,7 @@
 //	+ 1024 tiles not compressed
 //	Total size: 65536 = 65536
 //
-//	Time-stamp: 2026-08-10, 15:52:37
+//	Time-stamp: 2026-09-07, 18:30:43
 //	Exported by Cearn's GBA Image Transmogrifier, v1.17.1-dirty
 //	( http://www.coranac.com/projects/#grit )
 //
@@ -2332,7 +2332,7 @@ const unsigned int flags_sheet2Tiles[16384] __attribute__((aligned(4))) __attrib
 //	+ palette 12 entries, not compressed
 //	Total size: 24 = 24
 //
-//	Time-stamp: 2026-08-10, 15:52:37
+//	Time-stamp: 2026-09-07, 18:30:43
 //	Exported by Cearn's GBA Image Transmogrifier, v1.17.1-dirty
 //	( http://www.coranac.com/projects/#grit )
 //

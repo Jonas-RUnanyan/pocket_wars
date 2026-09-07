@@ -63,7 +63,9 @@ build/Code/source/menu.cpp.o: source/menu.cpp include/menu.h \
  C:/msys64/opt/wonderful/thirdparty/blocksds/core/libs/libnds/include/nds/arm9/teak/fifo.h \
  C:/msys64/opt/wonderful/thirdparty/blocksds/core/libs/libnds/include/nds/arm9/teak/tlf.h \
  include/text_sprites.h include/turn_system.h include/countries.h \
- include/countries.h include/text_sprites.h
+ include/countries.h include/text_sprites.h include/political_data.h \
+ include/country_display.h include/decisions.h include/decisions_data.h \
+ include/political_data.h include/province_cores.h
 include/menu.h:
 C:/msys64/opt/wonderful/thirdparty/blocksds/core/libs/libnds/include/nds.h:
 C:/msys64/opt/wonderful/thirdparty/blocksds/core/libs/libnds/include/nds/bios.h:
@@ -133,3 +135,9 @@ include/turn_system.h:
 include/countries.h:
 include/countries.h:
 include/text_sprites.h:
+include/political_data.h:
+include/country_display.h:
+include/decisions.h:
+include/decisions_data.h:
+include/political_data.h:
+include/province_cores.h:

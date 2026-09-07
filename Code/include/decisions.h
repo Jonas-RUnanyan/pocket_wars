@@ -5,6 +5,7 @@
 #include "decisions_data.h"
 #include "political_data.h"
 #include "countries.h"
+#include "province_cores.h"
 
 // Mutable runtime copy of political state. country_politics[] (political_data.h)
 // stays const — it's the authored starting point. This is what decisions read
@@ -13,6 +14,11 @@ extern CountryPolitics country_politics_runtime[COUNTRY_POLITICS_COUNT];
 
 // has ANY country ever taken decision i (global, for DECISION_TAKEN condition)
 extern bool decision_taken[DECISION_COUNT];
+
+extern bool countryExists[COUNTRY_COUNT];
+
+int getRuntimeCoreCount();
+const ProvinceCore* getRuntimeCore(int index);
 
 void initDecisionsSystem();  // call once per new game — copies authored state in, clears trackers
 

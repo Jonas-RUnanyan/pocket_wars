@@ -3,58 +3,19 @@
 #include <stdbool.h>
 #include <string.h>
 #include <malloc.h>
-#include "splash.h"
 #include "province_data.h"
-#include "province_map.h"
-#include "countries.h"
-#include "province_owners.h"
 #include "province_cores.h"
 #include "turn_system.h"
 #include "menu.h"
 #include "text_sprites.h"
 #include "sprites.h"
 #include "flags.h"
-#include "political_data.h"
-#include "decisions.h"
+#include "country_display.h"
+#include "politics.h"
+#include "display.h"
+#include "province_owners.h"
+#include "province_map.h"
 
-#undef RGB15
-#define BGR15(r,g,b) (0x8000 | ((b) << 10) | ((g) << 5) | (r))
-
-static const int DMA_CHANNEL = 3;
-
-#define SCREEN_W     256
-#define SCREEN_H     192
-#define MAP_W        512
-#define MAP_H        386
-
-// How many vblanks to skip between redraws while moving.
-// 2 = render every 3rd frame (~20fps). Raise for faster feel, lower for smoother.
-#define RENDER_SKIP  4
-
-int mapX     = 0;
-int mapY     = 0;
-int mapScale = 256; // 8.8 fixed, 256 = 1:1
-
-bool showPoliticalMap  = false;
-
-static u16  politicalMapBuffer[SCREEN_W * SCREEN_H];
-static bool politicalMapDirty  = true;
-static bool politicalWasMoving = false;
-
-static int  renderSkipCounter = 0;
-bool needsRedraw       = true;
-
-// Last touched province — persists on screen until next touch
-static u16  lastProvinceID   = 0xFFFF;
-static bool hasProvinceInfo  = false;
-
-typedef enum {
-    MAP_TERRAIN   = 0,
-    MAP_POLITICAL = 1,
-    MAP_TYPE_COUNT
-} MapType;
-
-MapType currentMapType = MAP_TERRAIN;
 
 #define POPUP_LINE_H 12
 #define POPUP_H      44   // two lines + padding
@@ -78,6 +39,14 @@ bool is_core(unsigned short province_id, unsigned char country_id)
         if (province_cores[i].province_id == province_id &&
             province_cores[i].country_id  == country_id)
             return true;
+
+    int rc = getRuntimeCoreCount();
+    for (int i = 0; i < rc; i++)
+    {
+        const ProvinceCore* c = getRuntimeCore(i);
+        if (c->province_id == province_id && c->country_id == country_id)
+            return true;
+    }
     return false;
 }
 
@@ -128,198 +97,7 @@ void initVideo()
 	
 }
 
-//---------------------------------------------
-// TERRAIN VIEWPORT BLIT
-//---------------------------------------------
 
-void blitTerrainViewport()
-{
-    u16*       vram = (u16*)BG_BMP_RAM(0);
-    const u16* src  = (const u16*)splashBitmap;
-
-    int stepX     = mapScale;
-    int stepY     = mapScale;
-    int startMapX = mapX << 8;
-    int fixedMapY = mapY << 8;
-
-    for (int sy = 0; sy < SCREEN_H; sy++)
-    {
-        int mapPY = fixedMapY >> 8;
-
-        if (mapPY < 0 || mapPY >= MAP_H)
-        {
-            memset(vram + sy * SCREEN_W, 0, SCREEN_W * 2);
-            fixedMapY += stepY;
-            continue;
-        }
-
-        // Fast path: 1:1 scale and full row in bounds — one DMA per row
-        if (mapScale == 256 && mapX >= 0 && mapX + SCREEN_W <= MAP_W)
-        {
-            dmaCopyHalfWords(DMA_CHANNEL,
-                src + mapPY * MAP_W + mapX,
-                vram + sy * SCREEN_W,
-                SCREEN_W * 2);
-        }
-        else
-        {
-            int   fixedMapX = startMapX;
-            u16*  dst_row   = vram + sy * SCREEN_W;
-
-            for (int sx = 0; sx < SCREEN_W; sx++)
-            {
-                int mapPX = fixedMapX >> 8;
-                dst_row[sx] = (mapPX >= 0 && mapPX < MAP_W)
-                    ? src[mapPY * MAP_W + mapPX]
-                    : (u16)0x8000;
-                fixedMapX += stepX;
-            }
-        }
-
-        fixedMapY += stepY;
-    }
-}
-
-//---------------------------------------------
-// POLITICAL MAP — generate into RAM buffer, blit when ready
-//---------------------------------------------
-
-void generatePoliticalMap()
-{
-    const u16 unowned = BGR15(0, 1, 3);
-
-    int stepX     = mapScale;
-    int stepY     = mapScale;
-    int startMapX = mapX << 8;
-    int fixedMapY = mapY << 8;
-
-    for (int sy = 0; sy < SCREEN_H; sy++)
-    {
-        int  mapPY    = fixedMapY >> 8;
-        int  fixedMapX = startMapX;
-        u16* dst_row  = politicalMapBuffer + sy * SCREEN_W;
-
-        for (int sx = 0; sx < SCREEN_W; sx++)
-        {
-            int  mapPX = fixedMapX >> 8;
-            u16  color = 0x8000;
-
-            if (mapPX >= 0 && mapPX < MAP_W &&
-                mapPY >= 0 && mapPY < MAP_H)
-            {
-                u16 pid = provinceMap[mapPY * MAP_W + mapPX];
-
-                if (pid < PROVINCE_OWNER_COUNT)
-                {
-                    unsigned char oid = province_owners[pid];
-                    if (oid == 0xFF)
-                    {
-                        color = BGR15(0, 8 + (mapPX + (mapPY*7)%5) % 16 / 4, 20 + (mapPX + (mapPY*13)%7) % 16 / 2);
-                    }
-                    else
-                    {
-                        const Country* c = &countries[oid];
-                        color = c ? c->color : BGR15(0, 8 + (mapPX + (mapPY*7)%5) % 16 / 4, 20 + (mapPX + (mapPY*13)%7) % 16 / 2);
-                    }
-                }
-                else
-                {
-                    color = BGR15(0, 8 + (mapPX + (mapPY*7)%5) % 16 / 4, 20 + (mapPX + (mapPY*13)%7) % 16 / 2);
-                }
-            }
-
-            dst_row[sx]  = color;
-            fixedMapX   += stepX;
-        }
-
-        fixedMapY += stepY;
-    }
-
-    politicalMapDirty = false;
-}
-
-void blitPoliticalViewport()
-{
-    if (politicalMapDirty)
-        generatePoliticalMap();
-
-    dmaCopyHalfWords(DMA_CHANNEL,
-        politicalMapBuffer,
-        (u16*)BG_BMP_RAM(0),
-        SCREEN_W * SCREEN_H * 2);
-}
-
-//---------------------------------------------
-// TOGGLE MAP MODE
-//---------------------------------------------
-
-void cycleMapType(int direction)
-{
-    currentMapType     = (MapType)(((int)currentMapType + direction + MAP_TYPE_COUNT) % MAP_TYPE_COUNT);
-    showPoliticalMap   = (currentMapType == MAP_POLITICAL);  // keeps existing blit logic elsewhere unchanged
-    politicalMapDirty  = true;
-    needsRedraw        = true;
-}
-
-//---------------------------------------------
-// CAMERA + FRAME SKIP
-//---------------------------------------------
-
-void updateCamera(int keys, int pressed)
-{
-
-    if (pressed & KEY_L) cycleMapType(-1);
-	if (pressed & KEY_R) cycleMapType(+1);
-
-    bool moved = false;
-
-    int panSpeed = (mapScale >> 8);
-    if (panSpeed < 1) panSpeed = 1;
-
-    if (keys & KEY_LEFT)  { mapX -= panSpeed; moved = true; }
-    if (keys & KEY_RIGHT) { mapX += panSpeed; moved = true; }
-    if (keys & KEY_UP)    { mapY -= panSpeed; moved = true; }
-    if (keys & KEY_DOWN)  { mapY += panSpeed; moved = true; }
-    if (keys & KEY_A)     { mapScale -= 4;    moved = true; }
-    if (keys & KEY_B)     { mapScale += 4;    moved = true; }
-
-    if (mapScale < 64)   mapScale = 64;
-    if (mapScale > 1024) mapScale = 1024;
-
-    // Clamp to map bounds
-    if (mapX < 0) mapX = 0;
-    if (mapY < 0) mapY = 0;
-    int visW = (SCREEN_W * mapScale) >> 8;
-    int visH = (SCREEN_H * mapScale) >> 8;
-    if (visW > MAP_W) visW = MAP_W;
-    if (visH > MAP_H) visH = MAP_H;
-    if (mapX + visW > MAP_W) mapX = MAP_W - visW;
-    if (mapY + visH > MAP_H) mapY = MAP_H - visH;
-
-    if (moved)
-    {
-        renderSkipCounter++;
-        if (renderSkipCounter > RENDER_SKIP)
-        {
-            renderSkipCounter = 0;
-            needsRedraw       = true;
-            if (showPoliticalMap)
-                politicalMapDirty = true;
-        }
-    }
-    else
-    {
-        // Camera just stopped — force one final clean redraw
-        if (politicalWasMoving)
-        {
-            politicalMapDirty = true;
-            needsRedraw       = true;
-        }
-        renderSkipCounter = 0;
-    }
-
-    politicalWasMoving = moved;
-}
 
 //---------------------------------------------
 // TOUCH
@@ -397,7 +175,7 @@ void handleCountryPopupTouch()
     else
     {
         snprintf(popupLine1, sizeof(popupLine1), "DIPLO WITH:");
-        snprintf(popupLine2, sizeof(popupLine2), "%s", countries[oid].name);
+        snprintf(popupLine2, sizeof(popupLine2), "%s", getCountryDisplayName(oid, country_politics_runtime[oid].ruling_ideology));
     }
 
     int w1 = textPixelWidth(popupLine1);
@@ -437,34 +215,6 @@ void drawCountryPopup()
 }
 
 
-// Ideology enum order must match political_editor.py's IDEOLOGIES list exactly —
-// it's what the generated Ideology enum in political_data.h is indexed against.
-static const char* IDEOLOGY_NAMES[IDEOLOGY_COUNT] = {
-    "FASCISM", "DEMOCRACY", "COMMUNISM", "AUTOCRACY"
-};
-
-// Name of whoever's actually ruling under a country's ruling ideology right now.
-// Defensive bounds check: COUNTRY_POLITICS_COUNT could drift from COUNTRY_COUNT if
-// political_editor.py's export gets out of sync with a later country_filler.py edit
-// (e.g. someone adds a country and forgets to re-run the political tool) — checking
-// against COUNTRY_POLITICS_COUNT specifically (the actual array size) rather than
-// COUNTRY_COUNT avoids reading past the end of country_politics[] if that happens.
-const char* get_ruling_leader_name(unsigned char country_id)
-{
-    if (country_id >= COUNTRY_POLITICS_COUNT) return "UNKNOWN";
-
-    const CountryPolitics* pol = &country_politics_runtime[country_id];
-    unsigned char leader_idx = pol->current_leader[pol->ruling_ideology];
-
-    if (leader_idx == LEADER_NONE) return "NO LEADER";
-    return leaders[leader_idx].name;
-}
-
-unsigned char get_ruling_ideology(unsigned char country_id)
-{
-    if (country_id >= COUNTRY_POLITICS_COUNT) return IDEOLOGY_AUTOCRACY; // arbitrary but consistent fallback
-    return country_politics_runtime[country_id].ruling_ideology;
-}
 
 //---------------------------------------------
 // SUB SCREEN — province info using Sprites
@@ -477,7 +227,9 @@ void printProvinceInfo(u16 pid)
     char buf[64];
     int curY = 8;
 
-    snprintf(buf, sizeof(buf), "TURN: %s (%d)", countries[CURRENT_TURN.current_country].name, CURRENT_TURN.current_country);
+    snprintf(buf, sizeof(buf), "TURN: %s (%d)",
+         getCountryDisplayName(currentActingCountry(), country_politics_runtime[currentActingCountry()].ruling_ideology),
+         currentActingCountry());
     drawText(TEXT_ENGINE_SUB, 8, curY, buf);
     curY += 14;
 
@@ -492,8 +244,7 @@ void printProvinceInfo(u16 pid)
     }
     else
     {
-        const Country* owner = &countries[oid];
-        snprintf(buf, sizeof(buf), "OWNER: %s", owner->name);
+        snprintf(buf, sizeof(buf), "OWNER: %s", getCountryDisplayName(oid, country_politics_runtime[oid].ruling_ideology));
         drawText(TEXT_ENGINE_SUB, 8, curY, buf);
         showFlag(oid, get_ruling_ideology(oid), 180, 8);
         curY += 14;
@@ -563,7 +314,16 @@ void printProvinceInfo(u16 pid)
     }
 }
 
-
+const char* getCountryDisplayName(unsigned char country_id, unsigned char ruling_ideology)
+{
+    if (country_id >= COUNTRY_COUNT) return "UNKNOWN";
+    if (ruling_ideology < 4)
+    {
+        const char* override = countries[country_id].ideology_names[ruling_ideology];
+        if (override != NULL) return override;
+    }
+    return countries[country_id].name;
+}
 
 
 //---------------------------------------------

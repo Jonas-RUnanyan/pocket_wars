@@ -11,7 +11,7 @@ const Leader leaders[LEADER_COUNT] = {
     {"Konrad Adenauer", 6, 1, 8},  // Germany - Democracy
     {"Benito Mussolini", 8, 0, 9},  // Italy - Fascism
     {"Miklos Horthy", 10, 3, 11},  // Hungary - Autocracy
-    {"Iosef Stalin", 25, 2, 12},  // Soviet Union - Communism
+    {"Iosef Stalin", 25, 2, 12},  // Russia - Communism
     {"Stanley Baldwin", 26, 1, 13},  // United Kingdom - Democracy
     {"António de Oliveria Salazar", 0, 3, 14},  // Portugal - Autocracy
     {"Maurice Thorez", 2, 2, 15},  // France - Communism
@@ -108,11 +108,11 @@ const Leader leaders[LEADER_COUNT] = {
     {"Vilho Annala", 24, 0, 106},  // Finland - Fascism
     {"Carl Gustaf Emil Mannerheim", 24, 3, 107},  // Finland - Autocracy
     {"Pehr Evind Svinhufvud", 24, 1, 108},  // Finland - Democracy
-    {"Konstantin Rodzaevsky", 25, 0, 109},  // Soviet Union - Fascism
-    {"Alexander Kerensky", 25, 1, 110},  // Soviet Union - Democracy
-    {"Pavel Milyukov", 25, 1, 111},  // Soviet Union - Democracy
-    {"Leon Trotsky", 25, 2, 112},  // Soviet Union - Communism
-    {"Kirill I ", 25, 3, 113},  // Soviet Union - Autocracy
+    {"Konstantin Rodzaevsky", 25, 0, 109},  // Russia - Fascism
+    {"Alexander Kerensky", 25, 1, 110},  // Russia - Democracy
+    {"Pavel Milyukov", 25, 1, 111},  // Russia - Democracy
+    {"Leon Trotsky", 25, 2, 112},  // Russia - Communism
+    {"Kirill I ", 25, 3, 113},  // Russia - Autocracy
     {"Oswald Mosley", 26, 0, 114},  // United Kingdom - Fascism
     {"Harry Pollitt", 26, 2, 115},  // United Kingdom - Communism
     {"George V", 26, 3, 116},  // United Kingdom - Autocracy
@@ -165,7 +165,7 @@ const CountryPolitics country_politics[COUNTRY_POLITICS_COUNT] = {
     // Hungary
     {{25, 25, 25, 25}, 3, 50, {48, 47, 49, 9}},
     // Czechoslovakia
-    {{25, 25, 25, 25}, 3, 50, {51, 52, 50, LEADER_NONE}},
+    {{25, 25, 25, 25}, 1, 50, {51, 52, 50, LEADER_NONE}},
     // Yugoslavia
     {{25, 25, 25, 25}, 3, 50, {53, 56, 57, 54}},
     // Albania
@@ -192,7 +192,7 @@ const CountryPolitics country_politics[COUNTRY_POLITICS_COUNT] = {
     {{25, 25, 25, 25}, 1, 50, {100, 99, 101, 102}},
     // Finland
     {{25, 25, 25, 25}, 1, 50, {104, 106, 103, 105}},
-    // Soviet Union
+    // Russia
     {{0, 0, 100, 0}, 2, 50, {107, 108, 10, 111}},
     // United Kingdom
     {{25, 25, 25, 25}, 1, 50, {112, 11, 113, 114}},
@@ -205,5 +205,7 @@ const CountryPolitics country_politics[COUNTRY_POLITICS_COUNT] = {
     // Saudi Arabia
     {{25, 25, 25, 25}, 3, 50, {133, 132, LEADER_NONE, 131}},
     // Persia
-    {{25, 25, 25, 25}, 3, 50, {136, 135, 137, 134}}
+    {{25, 25, 25, 25}, 3, 50, {136, 135, 137, 134}},
+    // Austria-Hungary
+    {{25, 25, 25, 25}, 3, 50, {LEADER_NONE, LEADER_NONE, LEADER_NONE, LEADER_NONE}}
 };

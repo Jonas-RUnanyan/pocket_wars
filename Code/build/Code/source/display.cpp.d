@@ -1,5 +1,4 @@
-build/Code/source/turn_system.cpp.o: source/turn_system.cpp \
- include/turn_system.h \
+build/Code/source/display.cpp.o: source/display.cpp \
  C:/msys64/opt/wonderful/thirdparty/blocksds/core/libs/libnds/include/nds.h \
  C:/msys64/opt/wonderful/thirdparty/blocksds/core/libs/libnds/include/nds/bios.h \
  C:/msys64/opt/wonderful/thirdparty/blocksds/core/libs/libnds/include/nds/ndstypes.h \
@@ -63,10 +62,8 @@ build/Code/source/turn_system.cpp.o: source/turn_system.cpp \
  C:/msys64/opt/wonderful/thirdparty/blocksds/core/libs/libnds/include/nds/arm9/teak/dsp.h \
  C:/msys64/opt/wonderful/thirdparty/blocksds/core/libs/libnds/include/nds/arm9/teak/fifo.h \
  C:/msys64/opt/wonderful/thirdparty/blocksds/core/libs/libnds/include/nds/arm9/teak/tlf.h \
- include/countries.h include/decisions.h include/decisions_data.h \
- include/political_data.h include/province_cores.h \
- include/province_owners.h
-include/turn_system.h:
+ include/display.h include/province_map.h include/province_owners.h \
+ include/countries.h build/Code/gfx/splash.h
 C:/msys64/opt/wonderful/thirdparty/blocksds/core/libs/libnds/include/nds.h:
 C:/msys64/opt/wonderful/thirdparty/blocksds/core/libs/libnds/include/nds/bios.h:
 C:/msys64/opt/wonderful/thirdparty/blocksds/core/libs/libnds/include/nds/ndstypes.h:
@@ -130,9 +127,8 @@ C:/msys64/opt/wonderful/thirdparty/blocksds/core/libs/libnds/include/nds/arm9/pe
 C:/msys64/opt/wonderful/thirdparty/blocksds/core/libs/libnds/include/nds/arm9/teak/dsp.h:
 C:/msys64/opt/wonderful/thirdparty/blocksds/core/libs/libnds/include/nds/arm9/teak/fifo.h:
 C:/msys64/opt/wonderful/thirdparty/blocksds/core/libs/libnds/include/nds/arm9/teak/tlf.h:
-include/countries.h:
-include/decisions.h:
-include/decisions_data.h:
-include/political_data.h:
-include/province_cores.h:
+include/display.h:
+include/province_map.h:
 include/province_owners.h:
+include/countries.h:
+build/Code/gfx/splash.h:

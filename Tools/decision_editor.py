@@ -78,7 +78,9 @@ EFFECT_TYPES = {
     'SET_PROVINCE_OWNER':    {'label': 'Set province/state owner',                   'params': [('province_id', 'province'), ('country_id', 'country_or_self')]},
     'SET_LEADER':            {'label': 'Set ideology leader to a specific person',   'params': [('leader', 'leader')]},
     'CLEAR_LEADER':          {'label': 'Clear ideology leader (power vacuum)',       'params': [('country_id', 'country_or_self'), ('ideology', 'ideology')]},
-    'FORM_NATION':           {'label': '[STUB] Form nation (mechanics TBD)',         'params': [('target_country', 'country')]},
+    'FORM_NATION':           {'label': 'Form nation — acting country transforms into...', 'params': [('formed_country', 'country')]},
+    'ABSORB_COUNTRY':        {'label': "Absorb another country's provinces",         'params': [('absorbed_country', 'country'), ('into_country', 'country_or_self')]},
+    'ADD_CORE':              {'label': 'Grant a core on a province',                 'params': [('province_id', 'province'), ('country_id', 'country_or_self')]},
 }
 
 CONDOP_ORDER = ['AND', 'OR', 'NOT'] + list(CONDITION_TYPES.keys())
@@ -271,7 +273,18 @@ class DecisionEditor:
             target = "SELF (acting country)" if cid == EFFECT_COUNTRY_SELF else self.country_name(cid)
             return f"Clear {IDEOLOGIES[p.get('ideology', 0)]} leader for {target} (power vacuum)"
         if etype == 'FORM_NATION':
-            return f"[STUB] Form nation: transform into {self.country_name(p.get('target_country', 0))} (mechanics TBD)"
+            return f"Transform acting country into {self.country_name(p.get('formed_country', 0))} (transfers own provinces + political state, deactivates old identity)"
+        if etype == 'ABSORB_COUNTRY':
+            absorbed = self.country_name(p.get('absorbed_country', 0))
+            cid = p.get('into_country', EFFECT_COUNTRY_SELF)
+            target = "SELF (acting country)" if cid == EFFECT_COUNTRY_SELF else self.country_name(cid)
+            return f"Absorb {absorbed}'s provinces into {target} — {absorbed} ceases to exist"
+        if etype == 'ADD_CORE':
+            pid = p.get('province_id', 0)
+            pname = self.provinces.get(pid, '')
+            cid = p.get('country_id', EFFECT_COUNTRY_SELF)
+            target = "SELF (acting country)" if cid == EFFECT_COUNTRY_SELF else self.country_name(cid)
+            return f"Grant core on province #{pid}" + (f" ({pname})" if pname else "") + f" to {target}"
         return etype
 
     def describe_tree(self, node):
@@ -1121,7 +1134,9 @@ class DecisionEditor:
         if etype == 'SET_PROVINCE_OWNER': return p.get('province_id', 0), p.get('country_id', EFFECT_COUNTRY_SELF)
         if etype == 'SET_LEADER': return p.get('leader', -1), 0
         if etype == 'CLEAR_LEADER': return p.get('country_id', EFFECT_COUNTRY_SELF), p.get('ideology', 0)
-        if etype == 'FORM_NATION': return p.get('target_country', 0), 0
+        if etype == 'FORM_NATION': return p.get('formed_country', 0), 0
+        if etype == 'ABSORB_COUNTRY': return p.get('absorbed_country', 0), p.get('into_country', EFFECT_COUNTRY_SELF)
+        if etype == 'ADD_CORE': return p.get('province_id', 0), p.get('country_id', EFFECT_COUNTRY_SELF)
         return 0, 0
 
     def export_to_c(self):
@@ -1214,7 +1229,12 @@ class DecisionEditor:
                 f.write("//     must linear-search leaders[] for a matching portrait_id at apply-time to find\n")
                 f.write("//     that leader's country_id/ideology/current array index\n")
                 f.write("//   CLEAR_LEADER: op1=country_id or EFFECT_COUNTRY_SELF, op2=ideology\n")
-                f.write("//   FORM_NATION: op1=target_country_id — STUB, mechanics not yet designed\n")
+                f.write("//   FORM_NATION: op1=formed_country_id — acting country transforms into it:\n")
+                f.write("//     transfers acting country's provinces, copies its political state over,\n")
+                f.write("//     deactivates old identity (unless same id), PLAYER_COUNTRY follows if applicable\n")
+                f.write("//   ABSORB_COUNTRY: op1=absorbed_country_id, op2=into country_id or EFFECT_COUNTRY_SELF\n")
+                f.write("//   ADD_CORE: op1=province_id, op2=country_id or EFFECT_COUNTRY_SELF — appends to a\n")
+                f.write("//     bounded runtime core list (MAX_RUNTIME_CORES in decisions.cpp), NOT province_cores.c\n")
                 f.write("typedef struct { unsigned char opcode; short operand1; short operand2; } EffectInstr;\n\n")
 
                 f.write("typedef struct {\n")

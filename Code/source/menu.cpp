@@ -2,6 +2,9 @@
 #include "turn_system.h"
 #include "countries.h"
 #include "text_sprites.h"
+#include "political_data.h"
+#include "country_display.h"
+#include "decisions.h"
 #include <stdio.h>
 #include <string.h>
 
@@ -115,6 +118,7 @@ void enterGameState()
     clearText(TEXT_ENGINE_MAIN);
     commitText(TEXT_ENGINE_MAIN);
     init_turn_system();
+	initDecisionsSystem();
     needsRedraw = true;
 }
 
@@ -211,16 +215,25 @@ void drawCountrySelect()
     drawText(TEXT_ENGINE_MAIN, 196, 105, ">");
     drawText(TEXT_ENGINE_MAIN, 36, 105, "<");
 
-    // Country names en tu font tienen minúsculas iguales a mayúsculas —
-    // se veran en mayúsculas por ahora, es esperado con esta fuente placeholder
-    int nameLen = strlen(countries[selectedCountryIdx].name);
+    int nameLen = strlen(getCountryDisplayName(selectedCountryIdx, country_politics[selectedCountryIdx].ruling_ideology));
     int nameX = 128 - (nameLen * CHAR_W) / 2;
-    drawText(TEXT_ENGINE_MAIN, nameX, 105, countries[selectedCountryIdx].name);
+    drawText(TEXT_ENGINE_MAIN, nameX, 105, getCountryDisplayName(selectedCountryIdx, country_politics[selectedCountryIdx].ruling_ideology));
 
     drawText(TEXT_ENGINE_MAIN, countryConfirmButton.x + 12, countryConfirmButton.y + 10, "SELECT");
 
     commitText(TEXT_ENGINE_MAIN);
     countrySelectDirty = false;
+}
+
+static int nextSelectableCountry(int start, int direction)
+{
+    int idx = start;
+    for (int i = 0; i < COUNTRY_COUNT; i++)
+    {
+        idx = (idx + direction + COUNTRY_COUNT) % COUNTRY_COUNT;
+        if (!countries[idx].is_formable) return idx;
+    }
+    return start;
 }
 
 void updateCountrySelect(int pressed)
@@ -229,9 +242,9 @@ void updateCountrySelect(int pressed)
     bool confirm = false;
 
     if (pressed & KEY_LEFT)
-        selectedCountryIdx = (selectedCountryIdx + COUNTRY_COUNT - 1) % COUNTRY_COUNT;
+        selectedCountryIdx = nextSelectableCountry(selectedCountryIdx, -1);
     if (pressed & KEY_RIGHT)
-        selectedCountryIdx = (selectedCountryIdx + 1) % COUNTRY_COUNT;
+        selectedCountryIdx = nextSelectableCountry(selectedCountryIdx, +1);
     if (pressed & KEY_A)
         confirm = true;
     if (pressed & KEY_B)
@@ -251,12 +264,12 @@ void updateCountrySelect(int pressed)
         if (touch.px >= left->x && touch.px < left->x + left->w &&
             touch.py >= left->y && touch.py < left->y + left->h)
         {
-            selectedCountryIdx = (selectedCountryIdx + COUNTRY_COUNT - 1) % COUNTRY_COUNT;
+            selectedCountryIdx = nextSelectableCountry(selectedCountryIdx, -1);
         }
         else if (touch.px >= right->x && touch.px < right->x + right->w &&
                  touch.py >= right->y && touch.py < right->y + right->h)
         {
-            selectedCountryIdx = (selectedCountryIdx + 1) % COUNTRY_COUNT;
+            selectedCountryIdx = nextSelectableCountry(selectedCountryIdx, +1);
         }
         else if (touch.px >= countryConfirmButton.x && touch.px < countryConfirmButton.x + countryConfirmButton.w &&
                  touch.py >= countryConfirmButton.y && touch.py < countryConfirmButton.y + countryConfirmButton.h)

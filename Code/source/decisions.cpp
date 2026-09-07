@@ -6,16 +6,53 @@
 #include <stdio.h>
 #include "province_owners.h"
 #include "flags.h"
+#include "province_cores.h"
+#include "province_owners.h"
+#include "formable_cores.h"
+
+
+#define MAX_RUNTIME_CORES 128
+
 #define BGR15(r,g,b) (0x8000 | ((b) << 10) | ((g) << 5) | (r))
 #define SCREEN_W     256
 
 CountryPolitics country_politics_runtime[COUNTRY_POLITICS_COUNT];
 bool decision_taken[DECISION_COUNT];
+bool countryExists[COUNTRY_COUNT];
 
 // -1 = this country has never taken this decision
 static int decisionLastTakenTurn[DECISION_COUNT][COUNTRY_COUNT];
 
 extern bool needsRedraw; // from main.cpp
+
+static ProvinceCore runtimeCores[MAX_RUNTIME_CORES];
+static int runtimeCoreCount = 0;
+
+
+int getRuntimeCoreCount() { return runtimeCoreCount; }
+const ProvinceCore* getRuntimeCore(int index) { return &runtimeCores[index]; }
+
+static void initCountryExistence()
+{
+    for (int i = 0; i < COUNTRY_COUNT; i++)
+        countryExists[i] = !countries[i].is_formable;
+}
+
+static void transferAllProvinces(unsigned char fromCountry, unsigned char toCountry)
+{
+    for (int p = 0; p < PROVINCE_OWNER_COUNT; p++)
+        if (province_owners[p] == fromCountry)
+            province_owners[p] = toCountry;
+}
+
+static void addRuntimeCore(int pid, unsigned char cid)
+{
+    if (pid < 0 || pid >= PROVINCE_OWNER_COUNT) return;
+    if (runtimeCoreCount >= MAX_RUNTIME_CORES) return;
+    runtimeCores[runtimeCoreCount].province_id = pid;
+    runtimeCores[runtimeCoreCount].country_id  = cid;
+    runtimeCoreCount++;
+}
 
 //---------------------------------------------
 // INIT
@@ -25,6 +62,8 @@ void initDecisionsSystem()
 {
     memcpy(country_politics_runtime, country_politics, sizeof(country_politics_runtime));
     memset(decision_taken, 0, sizeof(decision_taken));
+	
+	 initCountryExistence();
 
     for (int i = 0; i < DECISION_COUNT; i++)
         for (int c = 0; c < COUNTRY_COUNT; c++)
@@ -260,10 +299,48 @@ static void applyDecisionEffects(unsigned short offset, unsigned short length, u
                 break;
             }
 
-            case EFFECTOP_FORM_NATION:
-                // STUB — formable-nation mechanics not designed yet. No-op for now.
-				PLAYER_COUNTRY = instr->operand1;
-                break;
+            case EFFECTOP_FORM_NATION: {
+				unsigned char formedId = (unsigned char)instr->operand1;
+				if (formedId >= COUNTRY_COUNT) break;
+
+				transferAllProvinces(actingCountryId, formedId);
+
+				if (formedId != actingCountryId && actingCountryId < COUNTRY_POLITICS_COUNT && formedId < COUNTRY_POLITICS_COUNT)
+					country_politics_runtime[formedId] = country_politics_runtime[actingCountryId];
+
+				countryExists[formedId] = true;
+				if (formedId != actingCountryId)
+				{
+					countryExists[actingCountryId] = false;
+					swapTurnOrderPositions(actingCountryId, formedId); // formedId now occupies actingCountryId's ROTATION SLOT
+				}
+
+				if (actingCountryId == PLAYER_COUNTRY)
+					PLAYER_COUNTRY = formedId;
+
+				for (int i = 0; i < FORMABLE_CORE_COUNT; i++)
+					if (formable_cores[i].country_id == formedId)
+						addRuntimeCore(formable_cores[i].province_id, formedId);
+
+				break;
+			}
+
+			case EFFECTOP_ABSORB_COUNTRY: {
+				unsigned char absorbedId = (unsigned char)instr->operand1;
+				unsigned char intoId = (instr->operand2 == EFFECT_COUNTRY_SELF) ? actingCountryId : (unsigned char)instr->operand2;
+				if (absorbedId >= COUNTRY_COUNT || intoId >= COUNTRY_COUNT) break;
+
+				transferAllProvinces(absorbedId, intoId);
+				countryExists[absorbedId] = false;
+				break;
+			}
+
+			case EFFECTOP_ADD_CORE: {
+				int pid = instr->operand1;
+				unsigned char cid = (instr->operand2 == EFFECT_COUNTRY_SELF) ? actingCountryId : (unsigned char)instr->operand2;
+				addRuntimeCore(pid, cid);
+				break;
+			}
         }
     }
 }
@@ -362,27 +439,65 @@ static void updateDecisionDetailDisplay()
     commitText(TEXT_ENGINE_SUB);
 }
 
+static void scrollbarThumbGeometry(int* outThumbH, int* outTravel)
+{
+    int thumbH = (SCROLLBAR_H * DECISIONS_VISIBLE_ROWS) / decisionListCount;
+    if (thumbH < 8) thumbH = 8;
+    if (thumbH > SCROLLBAR_H) thumbH = SCROLLBAR_H;
+    *outThumbH = thumbH;
+    *outTravel = SCROLLBAR_H - thumbH;
+}
+
 static void drawScrollbar()
 {
     if (decisionListCount <= DECISIONS_VISIBLE_ROWS)
-        return; // nothing to scroll — don't draw a misleading full-height thumb
+        return;
 
-    u16* vram   = (u16*)BG_BMP_RAM(0);
-    u16 track   = BGR15(6, 6, 8);
-    u16 thumb   = BGR15(16, 18, 24);
+    u16* vram = (u16*)BG_BMP_RAM(0);
+    u16 track = BGR15(6, 6, 8);
+    u16 thumb = BGR15(16, 18, 24);
 
     for (int py = SCROLLBAR_Y0; py < SCROLLBAR_Y0 + SCROLLBAR_H; py++)
         for (int px = SCROLLBAR_X; px < SCROLLBAR_X + SCROLLBAR_W; px++)
             vram[py * SCREEN_W + px] = track;
 
+    int thumbH, travel;
+    scrollbarThumbGeometry(&thumbH, &travel);
     int maxScroll = decisionListCount - DECISIONS_VISIBLE_ROWS;
-    int thumbH = (SCROLLBAR_H * DECISIONS_VISIBLE_ROWS) / decisionListCount;
-    if (thumbH < 8) thumbH = 8; // floor so it stays grabbable even with many decisions
-    int thumbY = SCROLLBAR_Y0 + ((SCROLLBAR_H - thumbH) * decisionListScroll) / (maxScroll > 0 ? maxScroll : 1);
+    int thumbY = SCROLLBAR_Y0 + (maxScroll > 0 ? (travel * decisionListScroll) / maxScroll : 0);
 
     for (int py = thumbY; py < thumbY + thumbH && py < SCROLLBAR_Y0 + SCROLLBAR_H; py++)
         for (int px = SCROLLBAR_X; px < SCROLLBAR_X + SCROLLBAR_W; px++)
             vram[py * SCREEN_W + px] = thumb;
+}
+
+static void handleDecisionsDrag(int keys)
+{
+    if (!(keys & KEY_TOUCH)) return;
+    if (decisionListCount <= DECISIONS_VISIBLE_ROWS) return;
+
+    touchPosition touch;
+    touchRead(&touch);
+    if (touch.px < SCROLLBAR_X || touch.px >= SCROLLBAR_X + SCROLLBAR_W) return;
+    if (touch.py < SCROLLBAR_Y0 || touch.py >= SCROLLBAR_Y0 + SCROLLBAR_H) return;
+
+    int thumbH, travel;
+    scrollbarThumbGeometry(&thumbH, &travel);
+    int maxScroll = decisionListCount - DECISIONS_VISIBLE_ROWS;
+
+    int rel = touch.py - SCROLLBAR_Y0 - thumbH / 2;
+    if (rel < 0) rel = 0;
+    if (rel > travel) rel = travel;
+
+    int newScroll = (travel > 0) ? (rel * maxScroll + travel / 2) / travel : 0;
+    if (newScroll < 0) newScroll = 0;
+    if (newScroll > maxScroll) newScroll = maxScroll;
+
+    if (newScroll != decisionListScroll)
+    {
+        decisionListScroll = newScroll;
+        decisionsDirty = true;
+    }
 }
 
 static void drawDecisionsScreen()
@@ -425,30 +540,6 @@ static void returnFromDecisions()
     videoSetMode(MODE_5_2D | DISPLAY_BG3_ACTIVE | DISPLAY_SPR_ACTIVE | DISPLAY_SPR_1D);
     clearText(TEXT_ENGINE_MAIN);
     commitText(TEXT_ENGINE_MAIN);
-}
-
-static void handleDecisionsDrag(int keys)
-{
-    if (!(keys & KEY_TOUCH)) return;
-    if (decisionListCount <= DECISIONS_VISIBLE_ROWS) return;
-
-    touchPosition touch;
-    touchRead(&touch);
-
-    if (touch.px < SCROLLBAR_X || touch.px >= SCROLLBAR_X + SCROLLBAR_W) return;
-    if (touch.py < SCROLLBAR_Y0 || touch.py >= SCROLLBAR_Y0 + SCROLLBAR_H) return;
-
-    int maxScroll = decisionListCount - DECISIONS_VISIBLE_ROWS;
-    int rel = touch.py - SCROLLBAR_Y0;
-    int newScroll = (rel * maxScroll) / SCROLLBAR_H;
-    if (newScroll < 0) newScroll = 0;
-    if (newScroll > maxScroll) newScroll = maxScroll;
-
-    if (newScroll != decisionListScroll)
-    {
-        decisionListScroll = newScroll;
-        decisionsDirty = true;
-    }
 }
 
 static void handleDecisionsTap(int px, int py)

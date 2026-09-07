@@ -15,18 +15,21 @@ typedef enum {
 } TurnStage;
 
 typedef struct {
-    unsigned char current_country;
+    unsigned char current_position;  // index into turnOrder[] — a FIXED rotation slot, never reassigned
     int current_turn;
     bool awaiting_orders;
 } GameState;
 
 extern GameState CURRENT_TURN;
 extern TurnStage CURRENT_STAGE;
+extern unsigned char turnOrder[COUNTRY_COUNT];
 
 void init_turn_system();
 void pass_turn(int pressed);
 void next_country();
 void ai_actions();
 void phase_actions();
+unsigned char currentActingCountry();                                   // turnOrder[CURRENT_TURN.current_position]
+void swapTurnOrderPositions(unsigned char countryA, unsigned char countryB);
 
 #endif
